@@ -1,6 +1,8 @@
 import React from 'react';
 import {GoogleMap, LoadScript, Polyline} from '@react-google-maps/api';
 
+const API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY
+
 const SegmentMapPolyline = () => {
     const pathCoordinates = [
         {lat: 36.05298765935, lng: -112.083756616339},
@@ -20,7 +22,7 @@ const SegmentMapPolyline = () => {
 
     return (
         <LoadScript
-            googleMapsApiKey="AIzaSyBnYuLtIYFw1UNzGJ1RO7JOVhzY9SuGE0o"
+            googleMapsApiKey={API_KEY}
         >
         <GoogleMap
             id="marker-example"
