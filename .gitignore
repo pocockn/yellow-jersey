@@ -1,0 +1,32 @@
+.idea
+
+strava-api/strava-api
+strava-api/mocks
+strava-api/dev.toml
+
+
+# dependencies
+fe/node_modules
+fe/.pnp
+.pnp.js
+
+# testing
+fe/coverage
+
+# production
+fe/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+
+# System Files
+Thumbs.db

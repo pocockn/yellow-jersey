@@ -1,0 +1,7 @@
+db_host = "localhost"
+db_password = "rootpassword"
+db_user = "root"
+db_port = "27017"
+
+strava_client_secret="dbb1bef1781eada9cfa8bb8a1f617994f2fba822"
+strava_client_id=67662
