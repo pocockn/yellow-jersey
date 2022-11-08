@@ -14,12 +14,17 @@
     "@mui/material": "^5.10.11",
     "@mui/styled-engine-sc": "^5.10.6",
     "@react-google-maps/api": "^2.13.1",
+    "@react-leaflet/core": "^2.1.0",
     "axios": "^1.1.3",
-    "react": ">=16.8.0",
-    "react-dom": ">=16.8.0",
+    "dotenv": "^16.0.3",
+    "leaflet": "^1.9.2",
+    "polyline-encoded": "^0.0.9",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-leaflet": "^4.1.0",
     "react-router": "6.4.2",
     "react-router-dom": "^6.4.2",
-    "react-scripts": "^2.1.3",
+    "react-scripts": "^5.0.1",
     "styled-components": "^5.3.6",
     "web-vitals": "^3.0.3"
   },
@@ -37,20 +42,9 @@
     "minify:scss": "sass src/assets/scss/light-bootstrap-dashboard-react.scss src/assets/css/light-bootstrap-dashboard-react.min.css --style compressed",
     "build:scss": "npm run compile:scss && npm run minify:scss"
   },
-  "peerDependencies": {
-    "react": ">=16.8.0",
-    "react-dom": ">=16.8.0"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ]
 }

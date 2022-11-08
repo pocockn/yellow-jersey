@@ -10,7 +10,8 @@ import Sidebar from "../components/sidebar";
 import Header from "../components/header";
 import {useNavigate, useParams} from "react-router-dom";
 import CardActions from '@mui/material/CardActions';
-import sacalobra from '../assets/img/sacalobra.jpg' // relative path to image
+import sacalobra from '../assets/img/sacalobra.jpg'
+import SegmentMapPolyline from "../components/SegmentMapPolyline"; // relative path to image
 
 
 const Segments = () => {
@@ -53,27 +54,7 @@ const Segments = () => {
                         <div className="row">
                             {segments.map((segment) => (
                                 <div className="col-md-3">
-                                    <Card sx={{ m: 2 }}>
-                                        <CardMedia
-                                            component="img"
-                                            height="140"
-                                            image={sacalobra}
-                                            alt="green iguana"
-                                        />
-                                        <CardContent>
-                                            <Typography gutterBottom variant="h5" component="div">
-                                                {segment.name}
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                <p>Length: {segment.distance}km</p>
-                                                <p>Average Gradient: {segment.average_grade}</p>
-                                                <p>Country: {segment.country}</p>
-                                            </Typography>
-                                        </CardContent>
-                                        <CardActions>
-                                            <Button size="medium">Add</Button>
-                                        </CardActions>
-                                    </Card>
+                                    <SegmentMapPolyline segment={segment} />
                                 </div>
                             ))}
                         </div>

@@ -7,16 +7,10 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import {Button} from "@mui/material";
-import { useNavigate } from "react-router";
 import EditIcon from '@mui/icons-material/Edit';
 
 
-export default function EventsTable({events}) {
-    const navigate = useNavigate();
-    function handleClick(path) {
-        navigate("/user/event/" + path);
-    }
-
+export default function EventsTable({events, handleRoute}) {
     return (
         <TableContainer component={Paper}>
             <Table sx={{minWidth: 650}} size="small" aria-label="a dense table">
@@ -41,7 +35,7 @@ export default function EventsTable({events}) {
                             <TableCell align="right">{row.created_at}</TableCell>
                             <TableCell align="right">
                                 <Button size="small" variant="outlined"
-                                        onClick={() => handleClick(row.id)} endIcon={<EditIcon/>}>
+                                        onClick={() => handleRoute(row.id)} endIcon={<EditIcon/>}>
                                 </Button>
                             </TableCell>
                         </TableRow>

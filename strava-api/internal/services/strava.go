@@ -10,11 +10,14 @@ import (
 	"net/url"
 	"strings"
 
+	"golang.org/x/sync/errgroup"
+
 	"yellow-jersey/internal/strava"
 	"yellow-jersey/pkg/logs"
 )
 
 const (
+	// TODO: Should come from config
 	baseURL = "https://www.strava.com/api/v3"
 )
 
@@ -84,6 +87,34 @@ func (s *Strava) GetStarredSegments(accessToken string) ([]strava.Segment, error
 	return segments, nil
 }
 
+// GetSegments returns a list of detailed segments, this gives us access to the Polyline, so we can draw
+// the segment on a map for the user.
+func (s *Strava) GetSegments(accessToken string, ids []int) ([]strava.Segment, error) {
+	var segments []strava.Segment
+
+	var g errgroup.Group
+	for _, id := range ids {
+		segmentID := id
+		g.Go(func() error {
+			resp, err := s.run("GET", fmt.Sprintf("/segments/%d", segmentID), nil, accessToken)
+			if err != nil {
+				return err
+			}
+
+			var segment strava.Segment
+			if err = json.Unmarshal(resp, &segment); err != nil {
+				return err
+			}
+
+			segments = append(segments, segment)
+
+			return nil
+		})
+	}
+
+	return segments, g.Wait()
+}
+
 func (s *Strava) run(method, path string, params map[string]interface{}, token string) ([]byte, error) {
 	var err error
 
@@ -94,13 +125,14 @@ func (s *Strava) run(method, path string, params map[string]interface{}, token s
 
 	logs.Logger.Info().Msgf("performing request %s", baseURL+path)
 	var req *http.Request
-	if method == "POST" {
-		req, err = http.NewRequest("POST", baseURL+path, strings.NewReader(values.Encode()))
+	switch method {
+	case http.MethodPost:
+		req, err = http.NewRequest(http.MethodPost, baseURL+path, strings.NewReader(values.Encode()))
 		if err != nil {
 			return nil, err
 		}
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	} else {
+	default:
 		req, err = http.NewRequest(method, baseURL+path+"?"+values.Encode(), nil)
 		if err != nil {
 			return nil, err

@@ -2,7 +2,6 @@ import React from 'react';
 import axios from "axios";
 import Sidebar from "./sidebar";
 import Header from "./header";
-import SegmentMapPolyline from "./SegmentMapPolyline";
 
 export default class Home extends React.Component {
     state = {
@@ -34,7 +33,7 @@ export default class Home extends React.Component {
                                     <button>Connect with Strava</button>
                                 </a>
                             </div>
-                            {<SegmentMapPolyline />}
+                            <hr></hr>
                         </div>
                     </div>
                 </div>
