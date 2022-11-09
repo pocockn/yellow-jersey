@@ -1,17 +1,10 @@
 import AuthenticationManager from "../services/authManager";
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import Card from '@mui/material/Card';
 import Sidebar from "../components/sidebar";
 import Header from "../components/header";
 import {useNavigate, useParams} from "react-router-dom";
-import CardActions from '@mui/material/CardActions';
-import sacalobra from '../assets/img/sacalobra.jpg'
-import SegmentMapPolyline from "../components/SegmentMapPolyline"; // relative path to image
+import SegmentMapPolyline from "../components/SegmentMapPolyline";
 
 
 const Segments = () => {
@@ -54,7 +47,7 @@ const Segments = () => {
                         <div className="row">
                             {segments.map((segment) => (
                                 <div className="col-md-3">
-                                    <SegmentMapPolyline segment={segment} />
+                                    <SegmentMapPolyline segment={segment}/>
                                 </div>
                             ))}
                         </div>
