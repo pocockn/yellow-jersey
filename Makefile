@@ -3,7 +3,7 @@ POSTGRES_URL ?= postgres://postgres:postgres@0.0.0.0:5432/$(POSTGRES_DB)?sslmode
 
 .PHONY : init migrate-up clean-env
 
-clean:
+down:
 	@docker-compose down
 	@docker volume rm --force yellow-jersey_mongodb_data_container
 

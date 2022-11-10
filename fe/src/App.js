@@ -1,6 +1,6 @@
 import './App.css';
 import React from 'react';
-import Home from "./components/home";
+import Home from "./components/Home";
 import StravaCallback from "./components/stravaCallback";
 import {Route, Routes} from "react-router-dom";
 import Profile from "./components/profile";
@@ -8,7 +8,7 @@ import Register from "./components/register";
 import CreateEvent from "./components/create_event";
 import Events from "./pages/events";
 import Event from "./pages/event";
-import Segments from "./pages/starred_segments";
+import Segments from "./pages/StarredSegments";
 
 function App() {
     return (

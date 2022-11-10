@@ -22,7 +22,7 @@ func (h *Handlers) Register(e *echo.Echo) {
 	authed := e.Group("/user")
 	authed.Use(jwt)
 	authed.GET("/routes", h.Routes)
-	authed.GET("/segments", h.StarredSegments)
+	authed.GET("/segments", h.DetailedSegments)
 	authed.POST("/create-event", h.CreateEvent)
 	authed.GET("/events", h.FetchUserEvents)
 	authed.GET("/event/:id", h.FetchEvent)

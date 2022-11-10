@@ -5,7 +5,7 @@ INFRA
 - Release process 
 - Add linter (yawn)
 - K8s set up - Minikube
-- Add the mono repo into Git
+- Add the mono repo into Git ✔️
 - Once release process is finalised implement GoReleaser
 
 CONFIG/SECURITY
@@ -16,9 +16,9 @@ CONFIG/SECURITY
 - Hash access and refresh tokens, don't store as plain text
 
 MONGO
-- Research implementing a NoSQL approach - possibly Mongo
-- Once research is complete on NoSQL approach add a repo to the user service
-- Mongo tests within the user package
+- Research implementing a NoSQL approach - possibly Mongo  ✔️
+- Once research is complete on NoSQL approach add a repo to the user service ✔️
+- Mongo tests within the user package 
 - Add config approach for Mongo, make use of ENV vars for secrets
 
 TESTING
@@ -30,18 +30,26 @@ USERS
 - Finish off Mongo repo tests for users
 
 EVENTS
-- Add event struct
-- Add event service
+- Add event struct ✔️
+- Add event service ✔️
 - Event may be our first aggregate model, think about how to store this
-- Add segment entity to fetch a users segments
-- Add Mongo implementation for the event package
+- Add segment entity to fetch a users segments ✔️
+- Add Mongo implementation for the event package ✔️
+- Query for detailed segments to return a Polyline to display on the FE
 
 MISC REFACTORS
 - Move the pkg package into a common place for use in Monorepo.
 - Add a better read me explaining everything within this repo
 - Improve Echo setup within setup package. Look into extracting routes into their own file or package
+- Strava URL & callback URL should come from config
+- Make local development possible with the mocked Strava-API. Need an already logged-in user or to mock the
+Strava auth
 
 FE
 - Implement basic user flow for creating an event on the FE.
 - Design and implement basic registration / login page within FE
 - Think about a basic home page, show some stats?
+- Error strategy, we currently don't show any server errors on the FE
+- Implement React Leaflet to show segments on a map with a Polyline
+- Fix the user authentication
+- Fix null map issues if data isn't present within a component

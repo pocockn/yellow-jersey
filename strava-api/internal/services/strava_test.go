@@ -181,7 +181,7 @@ func TestStrava_GetStarredSegments(t *testing.T) {
 	defer ctrl.Finish()
 
 	t.Run("Successful segment response", func(t *testing.T) {
-		segmentFile, err := os.ReadFile("testdata/segment.json")
+		segmentFile, err := os.ReadFile("testdata/segments.json")
 		assert.NoError(t, err)
 
 		resp := &http.Response{
@@ -197,5 +197,54 @@ func TestStrava_GetStarredSegments(t *testing.T) {
 		segments, err := srv.GetStarredSegments("access")
 		assert.Len(t, segments, 1)
 		require.NoError(t, err)
+	})
+}
+
+func TestStrava_GetDetailedSegments(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	t.Run("Successful detailed segment response", func(t *testing.T) {
+		segmentFile, err := os.ReadFile("testdata/segment.json")
+		assert.NoError(t, err)
+
+		httpClient := mocks.NewMockHTTPClient(ctrl)
+		httpClient.EXPECT().Do(gomock.Any()).Return(&http.Response{
+			StatusCode: http.StatusOK,
+			Body:       nopCloser{bytes.NewBuffer(segmentFile)},
+		}, nil).Times(1)
+		httpClient.EXPECT().Do(gomock.Any()).Return(&http.Response{
+			StatusCode: http.StatusOK,
+			Body:       nopCloser{bytes.NewBuffer(segmentFile)},
+		}, nil).Times(1)
+
+		srv := services.NewWithStravaHTTPClient(httpClient)
+
+		segments, err := srv.GetSegments("access", []int{1, 2})
+		assert.Len(t, segments, 2)
+		require.NoError(t, err)
+	})
+
+	t.Run("Error from detailed segments", func(t *testing.T) {
+		stravaErr := strava.Error{
+			Message: "We can't authorise you, scum.",
+		}
+
+		b, err := json.Marshal(stravaErr)
+		require.NoError(t, err)
+		bytes.NewReader(b)
+
+		resp := &http.Response{
+			StatusCode: http.StatusForbidden,
+			Body:       nopCloser{bytes.NewBuffer(b)},
+		}
+
+		httpClient := mocks.NewMockHTTPClient(ctrl)
+		httpClient.EXPECT().Do(gomock.Any()).Return(resp, nil).Times(1)
+
+		srv := services.NewWithStravaHTTPClient(httpClient)
+
+		_, err = srv.GetSegments("access", []int{1})
+		assert.Error(t, err)
 	})
 }
