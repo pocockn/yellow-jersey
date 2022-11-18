@@ -10,7 +10,12 @@ import AddIcon from '@mui/icons-material/Add';
 const Event = () => {
     const authManager = new AuthenticationManager();
     const navigate = useNavigate();
-    const [event, setEvent] = useState({})
+    const [event, setEvent] = useState({
+        owner: "",
+        name: "",
+        segment_ids: [],
+        users: [],
+    })
     let {id} = useParams();
 
     useEffect(() => {
@@ -34,6 +39,32 @@ const Event = () => {
         })
     }
 
+    const saveEvent = () => {
+        fetch(`http://localhost:8080/user/event/` + id, {
+            "method": "PUT",
+            "headers": {Authorization: `Bearer ${authManager.getAccessToken()}`},
+            "body": JSON.stringify({
+                name: event.name,
+                segment_ids: event.segment_ids,
+                users: event.users
+            })
+        })
+            .then(response => response.json())
+            .then(response => {
+                console.log(response);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
+
+    const AddSegment = (id) => {
+        const newState = data.map(obj => {
+            return {...obj, segment_ids: [...obj.segment_ids, id]};
+        });
+        setEvent(newState);
+    }
+
     let addUsersButton;
     if (Array.isArray(event.users)) {
         addUsersButton = <p>{event.users}</p>;
@@ -45,12 +76,13 @@ const Event = () => {
     if (Array.isArray(event.segment_ids)) {
         addSegmentsButton = <p>{event.segment_ids}</p>;
     } else {
-        addSegmentsButton = <Button
-            size="small"
-            variant="outlined"
-            onClick={() => handleClick("add-segments")}
-            endIcon={<AddIcon/>}> Add Segments
-        </Button>;
+        addSegmentsButton =
+            <Button
+                size="small"
+                variant="outlined"
+                onClick={() => handleClick("add-segments")}
+                endIcon={<AddIcon/>}> Add Segments
+            </Button>;
     }
 
     return (

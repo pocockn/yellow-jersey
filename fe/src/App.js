@@ -5,9 +5,9 @@ import StravaCallback from "./components/stravaCallback";
 import {Route, Routes} from "react-router-dom";
 import Profile from "./components/profile";
 import Register from "./components/register";
-import CreateEvent from "./components/create_event";
-import Events from "./pages/events";
-import Event from "./pages/event";
+import CreateEvent from "./components/CreateEvent";
+import Events from "./pages/Events";
+import Event from "./pages/Event";
 import Segments from "./pages/StarredSegments";
 
 function App() {

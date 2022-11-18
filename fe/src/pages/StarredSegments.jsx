@@ -29,6 +29,15 @@ const Segments = () => {
         })
     }
 
+    const addSegment = () => {
+        axios.post(`http://localhost:8080/user/events`, {
+            headers: {Authorization: `Bearer ${authManager.getAccessToken()}`}
+        }).then(res => {
+            console.log(res);
+            setEvents(res.data.events)
+        })
+    }
+
     return (
         <div id="wrapper">
             {<Sidebar/>}
@@ -47,7 +56,7 @@ const Segments = () => {
                         <div className="row">
                             {segments.map((segment) => (
                                 <div className="col-md-3">
-                                    <SegmentMapPolyline segment={segment}/>
+                                    <SegmentMapPolyline segment={segment} addSegment={addSegment}/>
                                 </div>
                             ))}
                         </div>
