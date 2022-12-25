@@ -59,7 +59,7 @@ const Event = () => {
     }
 
     const AddSegment = (id) => {
-        const newState = data.map(obj => {
+        const newState = this.state.map(obj => {
             return {...obj, segment_ids: [...obj.segment_ids, id]};
         });
         setEvent(newState);

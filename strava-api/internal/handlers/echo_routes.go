@@ -23,8 +23,10 @@ func (h *Handlers) Register(e *echo.Echo) {
 	authed.Use(jwt)
 	authed.GET("/routes", h.Routes)
 	authed.GET("/segments", h.DetailedSegments)
+
 	authed.POST("/create-event", h.CreateEvent)
 	authed.GET("/events", h.FetchUserEvents)
+	authed.PUT("/event/:id", h.UpdateEvent)
 	authed.GET("/event/:id", h.FetchEvent)
 
 	logs.Logger.Info().Msgf("successfully registered API routes")

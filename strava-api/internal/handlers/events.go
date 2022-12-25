@@ -25,10 +25,11 @@ func (h *Handlers) CreateEvent(c echo.Context) error {
 		return err
 	}
 
-	_, err = h.events.CreateEvent(id, evt.Name)
+	evtID, err := h.events.CreateEvent(id, evt.Name)
 	if err != nil {
 		return err
 	}
+	logs.Logger.Info().Msgf("created event %s", evtID)
 
 	return nil
 }
@@ -62,4 +63,19 @@ func (h *Handlers) FetchUserEvents(c echo.Context) error {
 	return c.JSON(http.StatusOK, echo.Map{
 		"events": evts,
 	})
+}
+
+// UpdateEvent updates an event in our database from the payload.
+func (h *Handlers) UpdateEvent(c echo.Context) error {
+	e := new(event.Event)
+	if err := c.Bind(e); err != nil {
+		return err
+	}
+
+	if err := h.events.UpdateEvent(e); err != nil {
+		return err
+	}
+	logs.Logger.Info().Msgf("updated event %+v", e)
+
+	return nil
 }
