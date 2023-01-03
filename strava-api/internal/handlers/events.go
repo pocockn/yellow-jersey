@@ -37,7 +37,7 @@ func (h *Handlers) CreateEvent(c echo.Context) error {
 
 // FetchEvent fetches a single event from the database.
 func (h *Handlers) FetchEvent(c echo.Context) error {
-	id := c.Param("id")
+	id := c.Param("event_id")
 	evt, err := h.events.FetchEvent(id)
 	if err != nil {
 		return err
@@ -68,7 +68,7 @@ func (h *Handlers) FetchUserEvents(c echo.Context) error {
 
 // AddSegment adds a segment to an event.
 func (h *Handlers) AddSegment(c echo.Context) error {
-	id := c.Param("id")
+	id := c.Param("event_id")
 	segmentID := c.Param("segment_id")
 	if segmentID == "" || id == "" {
 		return fmt.Errorf("segment_id or event id can't be empty")

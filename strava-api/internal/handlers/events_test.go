@@ -66,8 +66,8 @@ func TestHandlers_Add_Segment(t *testing.T) {
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
-	c.SetPath("event/:id/segment/:segment_id")
-	c.SetParamNames("id", "segment_id")
+	c.SetPath("event/:event_id/segment/:segment_id")
+	c.SetParamNames("event_id", "segment_id")
 	c.SetParamValues("1234", "12345")
 
 	h := handlers.New(nil, nil, eventsSrv, "secret")
@@ -94,8 +94,8 @@ func TestHandlers_Add_Segment_Already_Added(t *testing.T) {
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
-	c.SetPath("event/:id/segment/:segment_id")
-	c.SetParamNames("id", "segment_id")
+	c.SetPath("event/:event_id/segment/:segment_id")
+	c.SetParamNames("event_id", "segment_id")
 	c.SetParamValues("1234", "12345")
 
 	h := handlers.New(nil, nil, eventsSrv, "secret")
