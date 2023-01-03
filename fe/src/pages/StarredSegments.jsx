@@ -25,11 +25,6 @@ const Segments = () => {
         axios.get(`http://localhost:8080/user/segments`, {
             headers: {Authorization: `Bearer ${authManager.getAccessToken()}`}
         }).then(res => {
-<<<<<<< Updated upstream
-            setSegments(res.data.segments);
-        })
-=======
-            console.log(res);
             setSegments(res.data.segments);
         })
     }
@@ -41,7 +36,6 @@ const Segments = () => {
         };
         fetch(`http://localhost:8080/user/event/` + id + "/segment/" + segment_id, requestOptions)
             .then(response => console.log(response))
->>>>>>> Stashed changes
     }
 
     return (
@@ -60,20 +54,12 @@ const Segments = () => {
                                 yellow jersey!</p>
                         </div>
                         <div className="row">
-<<<<<<< Updated upstream
-                            {segments.map((segment) => (
-                                <div className="col-md-3">
-                                    <SegmentMapPolyline segment={segment}/>
-                                </div>
-                            ))}
-=======
                             {Array.isArray(segments)
                                 ? segments.map((segment) => (
                                     <div className="col-md-3">
                                         <SegmentMapPolyline segment={segment} addSegment={addSegment}/>
                                     </div>
                                 )) : null}
->>>>>>> Stashed changes
                         </div>
                     </div>
                 </div>

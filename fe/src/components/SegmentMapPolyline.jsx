@@ -36,13 +36,10 @@ const SegmentMapPolyline = (props) => {
                 </Typography>
             </CardContent>
             <CardActions>
-<<<<<<< Updated upstream
                 <Button size="small">Add</Button>
-=======
                 {props.addSegment !== null ?
                     <Button onClick={() => props.addSegment(props.segment.id)} size="small">Add</Button> : null
                 }
->>>>>>> Stashed changes
             </CardActions>
         </Card>
     )

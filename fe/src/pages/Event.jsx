@@ -11,9 +11,6 @@ import SegmentMapPolyline from "../components/SegmentMapPolyline";
 const Event = () => {
     const authManager = new AuthenticationManager();
     const navigate = useNavigate();
-<<<<<<< Updated upstream:fe/src/pages/event.jsx
-    const [event, setEvent] = useState({})
-=======
     const [event, setEvent] = useState({
         owner: "",
         name: "",
@@ -24,7 +21,6 @@ const Event = () => {
         segment_ids: [],
     })
 
->>>>>>> Stashed changes:fe/src/pages/Event.jsx
     let {id} = useParams();
 
     useEffect(() => {
@@ -48,32 +44,12 @@ const Event = () => {
         })
     }
 
-<<<<<<< Updated upstream:fe/src/pages/event.jsx
-    let addUsersButton;
-    if (Array.isArray(event.users)) {
-        addUsersButton = <p>{event.users}</p>;
-    } else {
-        addUsersButton = <Button size="small" variant="outlined" endIcon={<AddIcon/>}> Add Users </Button>;
-    }
-
-    let addSegmentsButton;
-    if (Array.isArray(event.segment_ids)) {
-        addSegmentsButton = <p>{event.segment_ids}</p>;
-    } else {
-        addSegmentsButton = <Button
-            size="small"
-            variant="outlined"
-            onClick={() => handleClick("add-segments")}
-            endIcon={<AddIcon/>}> Add Segments
-        </Button>;
-=======
     const fetchSegments = () => {
         axios.get(`http://localhost:8080/user/segments`, {
             headers: {Authorization: `Bearer ${authManager.getAccessToken()}`}
         }).then(res => {
             setSegments(res.data.segments);
         })
->>>>>>> Stashed changes:fe/src/pages/Event.jsx
     }
 
     return (

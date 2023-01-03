@@ -35,12 +35,9 @@ EVENTS
 - Event may be our first aggregate model, think about how to store this
 - Add segment entity to fetch a users segments ✔️
 - Add Mongo implementation for the event package ✔️
-<<<<<<< Updated upstream
-- Query for detailed segments to return a Polyline to display on the FE
-=======
 - Query for detailed segments to return a Polyline to display on the FE ✔️
 - Add segments to an event ✔️
->>>>>>> Stashed changes
+
 
 MISC REFACTORS
 - Move the pkg package into a common place for use in Monorepo.
@@ -55,13 +52,7 @@ FE
 - Design and implement basic registration / login page within FE
 - Think about a basic home page, show some stats?
 - Error strategy, we currently don't show any server errors on the FE
-<<<<<<< Updated upstream
-- Implement React Leaflet to show segments on a map with a Polyline
-- Fix the user authentication
-- Fix null map issues if data isn't present within a component
-=======
 - Implement React Leaflet to show segments on a map with a Polyline ✔️
 - Fix the user authentication 
 - Fix null map issues if data isn't present within a component ✔️
 - Migrate to use the Fetch API.
->>>>>>> Stashed changes
