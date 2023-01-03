@@ -35,7 +35,7 @@ func (h *Handlers) Authorize(c echo.Context) error {
 
 	authReq := AuthRequest{}
 	if err = json.Unmarshal(body, &authReq); err != nil {
-		return fmt.Errorf("unable to unmarshal body %w", err)
+		return fmt.Errorf("unable to unmarshal body %s : %w", string(body), err)
 	}
 
 	resp, err := h.strava.Authorise(authReq.Code)

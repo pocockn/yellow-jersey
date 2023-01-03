@@ -33,8 +33,8 @@ func (s *Strava) Authorise(code string) (*strava.AuthorizationResponse, error) {
 	if resp.StatusCode != 200 {
 		var response strava.Error
 		contents, _ := io.ReadAll(resp.Body)
-		if err := json.Unmarshal(contents, &response); err != nil {
-			return nil, fmt.Errorf("unable to unmarshal response into JSON %w", err)
+		if err = json.Unmarshal(contents, &response); err != nil {
+			return nil, fmt.Errorf("unable to unmarshal response into JSON %s: %w", string(contents), err)
 		}
 
 		return nil, fmt.Errorf("problem performing auth %w", response)
@@ -52,7 +52,7 @@ func (s *Strava) Authorise(code string) (*strava.AuthorizationResponse, error) {
 
 // AuthorizationURL constructs the url a user should use to authorize this specific application.
 func (s *Strava) AuthorizationURL(state string) string {
-	u, err := url.Parse(fmt.Sprintf("%s/oauth/authorize", baseURL))
+	u, err := url.Parse("https://www.strava.com/api/v3/oauth/authorize")
 	if err != nil {
 		return ""
 	}

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"os"
 	"testing"
@@ -12,18 +11,12 @@ import (
 	"yellow-jersey/internal/services"
 	"yellow-jersey/internal/strava"
 	"yellow-jersey/mocks"
+	"yellow-jersey/testutil"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
-
-// TODO: This is useful, place into a test helper package somewhere.
-type nopCloser struct {
-	io.Reader
-}
-
-func (nopCloser) Close() error { return nil }
 
 func TestStrava_GetRoutes(t *testing.T) {
 	ctrl := gomock.NewController(t)
@@ -42,7 +35,7 @@ func TestStrava_GetRoutes(t *testing.T) {
 		bytes.NewReader(b)
 
 		resp := &http.Response{
-			Body: nopCloser{bytes.NewBuffer(b)},
+			Body: testutil.NoopCloser{Reader: bytes.NewBuffer(b)},
 		}
 
 		httpClient := mocks.NewMockHTTPClient(ctrl)
@@ -70,7 +63,7 @@ func TestStrava_GetRoutes(t *testing.T) {
 
 		resp := &http.Response{
 			StatusCode: http.StatusOK,
-			Body:       nopCloser{bytes.NewBuffer(b)},
+			Body:       testutil.NoopCloser{Reader: bytes.NewBuffer(b)},
 		}
 
 		httpClient := mocks.NewMockHTTPClient(ctrl)
@@ -123,7 +116,7 @@ func TestStrava_Authorise(t *testing.T) {
 
 		resp := &http.Response{
 			StatusCode: http.StatusOK,
-			Body:       nopCloser{bytes.NewBuffer(b)},
+			Body:       testutil.NoopCloser{Reader: bytes.NewBuffer(b)},
 		}
 
 		httpClient := mocks.NewMockHTTPClient(ctrl)
@@ -149,7 +142,7 @@ func TestStrava_Authorise(t *testing.T) {
 
 		resp := &http.Response{
 			StatusCode: http.StatusForbidden,
-			Body:       nopCloser{bytes.NewBuffer(b)},
+			Body:       testutil.NoopCloser{Reader: bytes.NewBuffer(b)},
 		}
 
 		httpClient := mocks.NewMockHTTPClient(ctrl)
@@ -186,7 +179,7 @@ func TestStrava_GetStarredSegments(t *testing.T) {
 
 		resp := &http.Response{
 			StatusCode: http.StatusOK,
-			Body:       nopCloser{bytes.NewBuffer(segmentFile)},
+			Body:       testutil.NoopCloser{Reader: bytes.NewBuffer(segmentFile)},
 		}
 
 		httpClient := mocks.NewMockHTTPClient(ctrl)
@@ -211,11 +204,11 @@ func TestStrava_GetDetailedSegments(t *testing.T) {
 		httpClient := mocks.NewMockHTTPClient(ctrl)
 		httpClient.EXPECT().Do(gomock.Any()).Return(&http.Response{
 			StatusCode: http.StatusOK,
-			Body:       nopCloser{bytes.NewBuffer(segmentFile)},
+			Body:       testutil.NoopCloser{Reader: bytes.NewBuffer(segmentFile)},
 		}, nil).Times(1)
 		httpClient.EXPECT().Do(gomock.Any()).Return(&http.Response{
 			StatusCode: http.StatusOK,
-			Body:       nopCloser{bytes.NewBuffer(segmentFile)},
+			Body:       testutil.NoopCloser{Reader: bytes.NewBuffer(segmentFile)},
 		}, nil).Times(1)
 
 		srv := services.NewWithStravaHTTPClient(httpClient)
@@ -236,7 +229,7 @@ func TestStrava_GetDetailedSegments(t *testing.T) {
 
 		resp := &http.Response{
 			StatusCode: http.StatusForbidden,
-			Body:       nopCloser{bytes.NewBuffer(b)},
+			Body:       testutil.NoopCloser{Reader: bytes.NewBuffer(b)},
 		}
 
 		httpClient := mocks.NewMockHTTPClient(ctrl)

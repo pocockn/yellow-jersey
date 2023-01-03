@@ -83,7 +83,6 @@ const Event = () => {
             </div>
         </div>
     )
-
 }
 
 export default Event;

@@ -28,7 +28,7 @@ const Events = () => {
             headers: {Authorization: `Bearer ${authManager.getAccessToken()}`}
         }).then(res => {
             console.log(res);
-            setEvents(res.data.events)
+                setEvents(res.data.events)
         })
     }
 
