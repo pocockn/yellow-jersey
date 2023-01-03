@@ -29,6 +29,7 @@ services:
 
   mock-strava-api:
     container_name: openapi_mock
+    platform: linux/amd64
     image: muonsoft/openapi-mock
     expose:
       - 8082

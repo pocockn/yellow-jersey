@@ -23,7 +23,8 @@ export default function EventsTable({events, handleRoute}) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {events.map((row) => (
+                    {Array.isArray(events)
+                        ? events.map((row) => (
                         <TableRow
                             key={row.name}
                             sx={{'&:last-child td, &:last-child th': {border: 0}}}
@@ -39,7 +40,7 @@ export default function EventsTable({events, handleRoute}) {
                                 </Button>
                             </TableCell>
                         </TableRow>
-                    ))}
+                    )) : null }
                 </TableBody>
             </Table>
         </TableContainer>

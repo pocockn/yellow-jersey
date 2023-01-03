@@ -11,7 +11,10 @@ const Segments = () => {
     const authManager = new AuthenticationManager();
     const navigate = useNavigate();
     let {id} = useParams();
-    const [segments, setSegments] = useState([])
+    const [segments, setSegments] = useState({
+        segments: {},
+        segment_ids: [],
+    })
 
     useEffect(() => {
         if (authManager.getAccessToken() === "") {
@@ -25,7 +28,19 @@ const Segments = () => {
         axios.get(`http://localhost:8080/user/segments`, {
             headers: {Authorization: `Bearer ${authManager.getAccessToken()}`}
         }).then(res => {
-            setSegments(res.data.segments);
+            const newState = data.map(obj => {
+                return {...obj, segments: res.data.segments};
+            });
+            setSegments(newState);
+        })
+    }
+
+    const addSegment = () => {
+        axios.post(`http://localhost:8080/user/event` + id,  {
+            headers: {Authorization: `Bearer ${authManager.getAccessToken()}`}
+        }).then(res => {
+            console.log(res);
+            setEvents(res.data.events)
         })
     }
 
@@ -43,11 +58,12 @@ const Segments = () => {
                             <p>Below are a list of your starred segments on Strava. Add the segment to your event to
                                 include it in your race. The user with the lowest team on all included segments is the
                                 yellow jersey!</p>
+                            <hr></hr>
                         </div>
                         <div className="row">
                             {segments.map((segment) => (
                                 <div className="col-md-3">
-                                    <SegmentMapPolyline segment={segment}/>
+                                    <SegmentMapPolyline segment={segment} addSegment={addSegment}/>
                                 </div>
                             ))}
                         </div>

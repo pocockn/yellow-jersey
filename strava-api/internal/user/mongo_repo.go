@@ -57,7 +57,7 @@ func (m MongoRepository) FetchUser(id string) (*User, error) {
 	defer cancel()
 
 	var u *User
-	err := m.users.FindOne(ctx, bson.M{"id": id}).Decode(&u)
+	err := m.users.FindOne(ctx, bson.M{"_id": id}).Decode(&u)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, ErrUserNotFound
@@ -92,7 +92,7 @@ func (m MongoRepository) UpdateUser(user *User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	filter := bson.D{{"id", user.ID}}
+	filter := bson.D{{"_id", user.ID}}
 	update := bson.M{
 		"$set": user,
 	}

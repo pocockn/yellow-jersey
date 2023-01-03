@@ -48,8 +48,6 @@ func (d DB) ConnectionString() string {
 	return fmt.Sprintf("mongodb://%s:%s@%s:%s/?maxPoolSize=20&w=majority", d.Username, d.Password, d.Host, d.Port)
 }
 
-// "mongodb://root:rootpassword@localhost:27017/?maxPoolSize=20&w=majority"
-
 func (c Config) generatePath() string {
 	environment := "dev"
 

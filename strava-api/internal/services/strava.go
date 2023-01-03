@@ -18,7 +18,7 @@ import (
 
 const (
 	// TODO: Should come from config
-	baseURL = "https://www.strava.com/api/v3"
+	baseURL = "http://localhost:8082"
 )
 
 var (

@@ -8,7 +8,7 @@ import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import polyUtil from "polyline-encoded"
 
-const SegmentMapPolyline = (props) => {
+const SegmentMapPolyline = (props, addSegment) => {
     const center = [props.segment.start_latlng[0], props.segment.end_latlng[1]];
     const polyline = polyUtil.decode(props.segment.map.polyline);
     const redOptions = {color: 'red'}
@@ -36,7 +36,7 @@ const SegmentMapPolyline = (props) => {
                 </Typography>
             </CardContent>
             <CardActions>
-                <Button size="small">Add</Button>
+                <Button onClick={() => addSegment(props.segment.id)} size="small">Add</Button>
             </CardActions>
         </Card>
     )
