@@ -36,12 +36,7 @@ EVENTS
 - Add segment entity to fetch a users segments ✔️
 - Add Mongo implementation for the event package ✔️
 - Query for detailed segments to return a Polyline to display on the FE ✔️
-<<<<<<< HEAD
 - Add segments to an event ✔️
-
-=======
-- Add segments to an event
->>>>>>> 7e7880e1992be8636ea0119dd0a9091bd659af21
 
 MISC REFACTORS
 - Move the pkg package into a common place for use in Monorepo.

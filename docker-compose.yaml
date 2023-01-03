@@ -28,22 +28,9 @@ services:
       ME_CONFIG_MONGODB_URL: mongodb://root:rootpassword@mongodb:27017/
 
   mock-strava-api:
-<<<<<<< Updated upstream
-    container_name: openapi_mock
-    platform: linux/amd64
-    image: muonsoft/openapi-mock
-    expose:
-      - 8082
-    environment:
-      OPENAPI_MOCK_SPECIFICATION_URL: '/app/openapi.yml'
-      OPENAPI_MOCK_PORT: 8082
-    networks:
-      - yellow-jersey
-=======
     platform: linux/amd64
     image: stoplight/prism:4
     command: 'mock -h 0.0.0.0 /tmp/api.oas3.yml'
->>>>>>> Stashed changes
     volumes:
       - ./openapi.yml:/tmp/api.oas3.yml:ro
     ports:
