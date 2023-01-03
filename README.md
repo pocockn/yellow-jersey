@@ -22,7 +22,7 @@ MONGO
 - Add config approach for Mongo, make use of ENV vars for secrets
 
 TESTING
-- Add some full service tests using dockertest - look at doing this for handlers package
+- Add some full service tests using dockertest - look at doing this for handlers package ✔️
 - Add a fixture helper when creating dummy objects for test
 
 USERS
@@ -35,21 +35,33 @@ EVENTS
 - Event may be our first aggregate model, think about how to store this
 - Add segment entity to fetch a users segments ✔️
 - Add Mongo implementation for the event package ✔️
+<<<<<<< Updated upstream
 - Query for detailed segments to return a Polyline to display on the FE
+=======
+- Query for detailed segments to return a Polyline to display on the FE ✔️
+- Add segments to an event ✔️
+>>>>>>> Stashed changes
 
 MISC REFACTORS
 - Move the pkg package into a common place for use in Monorepo.
 - Add a better read me explaining everything within this repo
-- Improve Echo setup within setup package. Look into extracting routes into their own file or package
+- Improve Echo setup within setup package. Look into extracting routes into their own file or package ✔️
 - Strava URL & callback URL should come from config
 - Make local development possible with the mocked Strava-API. Need an already logged-in user or to mock the
-Strava auth
+Strava auth ✔️
 
 FE
 - Implement basic user flow for creating an event on the FE.
 - Design and implement basic registration / login page within FE
 - Think about a basic home page, show some stats?
 - Error strategy, we currently don't show any server errors on the FE
+<<<<<<< Updated upstream
 - Implement React Leaflet to show segments on a map with a Polyline
 - Fix the user authentication
 - Fix null map issues if data isn't present within a component
+=======
+- Implement React Leaflet to show segments on a map with a Polyline ✔️
+- Fix the user authentication 
+- Fix null map issues if data isn't present within a component ✔️
+- Migrate to use the Fetch API.
+>>>>>>> Stashed changes

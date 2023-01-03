@@ -16,8 +16,8 @@ const Events = () => {
             navigate("/")
         }
 
-      fetchEvents();
-    },[])
+        fetchEvents();
+    }, [])
 
     const handleEventRoute = (path) => {
         navigate("/user/event/" + path);

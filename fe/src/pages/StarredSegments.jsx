@@ -25,8 +25,23 @@ const Segments = () => {
         axios.get(`http://localhost:8080/user/segments`, {
             headers: {Authorization: `Bearer ${authManager.getAccessToken()}`}
         }).then(res => {
+<<<<<<< Updated upstream
             setSegments(res.data.segments);
         })
+=======
+            console.log(res);
+            setSegments(res.data.segments);
+        })
+    }
+
+    const addSegment = (segment_id) => {
+        const requestOptions = {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json', Authorization: `Bearer ${authManager.getAccessToken()}`},
+        };
+        fetch(`http://localhost:8080/user/event/` + id + "/segment/" + segment_id, requestOptions)
+            .then(response => console.log(response))
+>>>>>>> Stashed changes
     }
 
     return (
@@ -41,15 +56,24 @@ const Segments = () => {
                         </div>
                         <div className="d-sm-4 align-items-center justify-content-between mb-4">
                             <p>Below are a list of your starred segments on Strava. Add the segment to your event to
-                                include it in your race. The user with the lowest team on all included segments is the
+                                include it in your race. The user with the lowest time on all included segments is the
                                 yellow jersey!</p>
                         </div>
                         <div className="row">
+<<<<<<< Updated upstream
                             {segments.map((segment) => (
                                 <div className="col-md-3">
                                     <SegmentMapPolyline segment={segment}/>
                                 </div>
                             ))}
+=======
+                            {Array.isArray(segments)
+                                ? segments.map((segment) => (
+                                    <div className="col-md-3">
+                                        <SegmentMapPolyline segment={segment} addSegment={addSegment}/>
+                                    </div>
+                                )) : null}
+>>>>>>> Stashed changes
                         </div>
                     </div>
                 </div>

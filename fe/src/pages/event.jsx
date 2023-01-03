@@ -6,11 +6,25 @@ import Sidebar from "../components/sidebar";
 import Header from "../components/header";
 import {Button} from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
+import SegmentMapPolyline from "../components/SegmentMapPolyline";
 
 const Event = () => {
     const authManager = new AuthenticationManager();
     const navigate = useNavigate();
+<<<<<<< Updated upstream:fe/src/pages/event.jsx
     const [event, setEvent] = useState({})
+=======
+    const [event, setEvent] = useState({
+        owner: "",
+        name: "",
+        users: [],
+    })
+    const [segments, setSegments] = useState({
+        segments: {},
+        segment_ids: [],
+    })
+
+>>>>>>> Stashed changes:fe/src/pages/Event.jsx
     let {id} = useParams();
 
     useEffect(() => {
@@ -19,6 +33,7 @@ const Event = () => {
         }
 
         fetchEvent();
+        fetchSegments()
     }, [])
 
     function handleClick(path) {
@@ -29,11 +44,11 @@ const Event = () => {
         axios.get(`http://localhost:8080/user/event/` + id, {
             headers: {Authorization: `Bearer ${authManager.getAccessToken()}`}
         }).then(res => {
-            console.log(res);
             setEvent(res.data.event)
         })
     }
 
+<<<<<<< Updated upstream:fe/src/pages/event.jsx
     let addUsersButton;
     if (Array.isArray(event.users)) {
         addUsersButton = <p>{event.users}</p>;
@@ -51,6 +66,14 @@ const Event = () => {
             onClick={() => handleClick("add-segments")}
             endIcon={<AddIcon/>}> Add Segments
         </Button>;
+=======
+    const fetchSegments = () => {
+        axios.get(`http://localhost:8080/user/segments`, {
+            headers: {Authorization: `Bearer ${authManager.getAccessToken()}`}
+        }).then(res => {
+            setSegments(res.data.segments);
+        })
+>>>>>>> Stashed changes:fe/src/pages/Event.jsx
     }
 
     return (
@@ -64,9 +87,21 @@ const Event = () => {
                             <h1 className="h3 mb-0 text-gray-800">{event.name}</h1>
                         </div>
                         <hr></hr>
-                        {addUsersButton}
+                        <p>{event.users}</p>
+                        <Button size="small" variant="outlined" endIcon={<AddIcon/>}> Add Users </Button>
                         <hr></hr>
-                        {addSegmentsButton}
+                        {Array.isArray(segments)
+                            ? segments.map((segment) => (
+                                <div className="col-md-3">
+                                    <SegmentMapPolyline segment={segment} addSegment={null}/>
+                                </div>
+                            )) : null}
+                        <Button
+                            size="small"
+                            variant="outlined"
+                            onClick={() => handleClick("add-segments")}
+                            endIcon={<AddIcon/>}> Add Segments
+                        </Button>
                     </div>
                 </div>
             </div>

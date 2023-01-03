@@ -30,13 +30,19 @@ const SegmentMapPolyline = (props) => {
                     {props.segment.name}
                 </Typography>
                 <Typography gutterBottom variant="body2" color="text.secondary">
-                    <p>Length: {kilometres}km</p>
-                    <p>Average Gradient: {props.segment.average_grade}</p>
-                    <p>Country: {props.segment.country}</p>
+                    Length: {kilometres}km<br/>
+                    Average Gradient: {props.segment.average_grade}<br/>
+                    Country: {props.segment.country}
                 </Typography>
             </CardContent>
             <CardActions>
+<<<<<<< Updated upstream
                 <Button size="small">Add</Button>
+=======
+                {props.addSegment !== null ?
+                    <Button onClick={() => props.addSegment(props.segment.id)} size="small">Add</Button> : null
+                }
+>>>>>>> Stashed changes
             </CardActions>
         </Card>
     )

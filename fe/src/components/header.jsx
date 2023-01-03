@@ -18,7 +18,7 @@ const Header = () => {
 
                 <div className="topbar-divider d-none d-sm-block"></div>
 
-                <li className="nav-item dropdown no-arrow">
+                <li className="nav-item dropdown no-arrow" key="nav-dropdown">
                     <a className="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span className="mr-2 d-none d-lg-inline text-gray-600 small">Nick Pocock</span>
