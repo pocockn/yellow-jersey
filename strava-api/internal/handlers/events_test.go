@@ -14,6 +14,7 @@ import (
 	"yellow-jersey/internal/handlers"
 	"yellow-jersey/internal/services"
 	"yellow-jersey/mocks"
+	"yellow-jersey/testutil"
 )
 
 func TestHandlers_UpdateEvent(t *testing.T) {
@@ -41,4 +42,62 @@ func TestHandlers_UpdateEvent(t *testing.T) {
 
 	h := handlers.New(nil, nil, eventsSrv, "secret")
 	assert.NoError(t, h.UpdateEvent(c))
+}
+
+func TestHandlers_Add_Segment(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	evt := new(event.Event)
+	evt.Name = "Croatia 2024"
+	evt.SegmentIDs = []string{"1234"}
+	evt.Users = []string{"1", "2", "3"}
+
+	eventMock := mocks.NewMockRepo(ctrl)
+	eventMock.EXPECT().Fetch("1234").Return(evt, nil)
+	eventMock.EXPECT().Update(evt).
+		Return(nil).Times(1)
+
+	eventsSrv, err := services.NewEvent(services.WithEventsRepository(eventMock))
+	assert.NoError(t, err)
+
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodPut, "/", testutil.NoopCloser{})
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.SetPath("event/:id/segment/:segment_id")
+	c.SetParamNames("id", "segment_id")
+	c.SetParamValues("1234", "12345")
+
+	h := handlers.New(nil, nil, eventsSrv, "secret")
+	assert.NoError(t, h.AddSegment(c))
+}
+
+func TestHandlers_Add_Segment_Already_Added(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	evt := new(event.Event)
+	evt.Name = "Croatia 2024"
+	evt.SegmentIDs = []string{"12345"}
+	evt.Users = []string{"1", "2", "3"}
+
+	eventMock := mocks.NewMockRepo(ctrl)
+	eventMock.EXPECT().Fetch("1234").Return(evt, nil)
+
+	eventsSrv, err := services.NewEvent(services.WithEventsRepository(eventMock))
+	assert.NoError(t, err)
+
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodPut, "/", testutil.NoopCloser{})
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.SetPath("event/:id/segment/:segment_id")
+	c.SetParamNames("id", "segment_id")
+	c.SetParamValues("1234", "12345")
+
+	h := handlers.New(nil, nil, eventsSrv, "secret")
+	assert.NoError(t, h.AddSegment(c))
 }

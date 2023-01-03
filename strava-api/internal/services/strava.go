@@ -18,7 +18,7 @@ import (
 
 const (
 	// TODO: Should come from config
-	baseURL = "http://mock-strava-api:8082"
+	baseURL = "http://localhost:8082"
 )
 
 var (

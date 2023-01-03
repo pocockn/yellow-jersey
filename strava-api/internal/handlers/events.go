@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/golang-jwt/jwt"
@@ -63,6 +64,36 @@ func (h *Handlers) FetchUserEvents(c echo.Context) error {
 	return c.JSON(http.StatusOK, echo.Map{
 		"events": evts,
 	})
+}
+
+// AddSegment adds a segment to an event.
+func (h *Handlers) AddSegment(c echo.Context) error {
+	id := c.Param("id")
+	segmentID := c.Param("segment_id")
+	if segmentID == "" || id == "" {
+		return fmt.Errorf("segment_id or event id can't be empty")
+	}
+
+	evt, err := h.events.FetchEvent(id)
+	if err != nil {
+		return err
+	}
+
+	for _, segment := range evt.SegmentIDs {
+		if segmentID == segment {
+			logs.Logger.Info().Msgf("segment %s already added to event", segmentID)
+			return nil
+		}
+	}
+
+	evt.SegmentIDs = append(evt.SegmentIDs, segmentID)
+
+	if err := h.events.UpdateEvent(evt); err != nil {
+		return err
+	}
+	logs.Logger.Info().Msgf("added segment %s to event %+v", id, segmentID)
+
+	return nil
 }
 
 // UpdateEvent updates an event in our database from the payload.

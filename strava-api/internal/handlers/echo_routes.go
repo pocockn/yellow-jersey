@@ -15,9 +15,11 @@ func (h *Handlers) Register(e *echo.Echo) {
 	e.Add(http.MethodPost, "/exchange_token", h.Authorize)
 
 	// TODO: Pass secret from config
-	jwt := middleware.JWTWithConfig(middleware.JWTConfig{
-		SigningKey: []byte("secret"),
-	})
+	jwt := middleware.JWTWithConfig(
+		middleware.JWTConfig{
+			SigningKey: []byte("secret"),
+		},
+	)
 
 	authed := e.Group("/user")
 	authed.Use(jwt)
@@ -26,6 +28,7 @@ func (h *Handlers) Register(e *echo.Echo) {
 
 	authed.POST("/create-event", h.CreateEvent)
 	authed.GET("/events", h.FetchUserEvents)
+	authed.PUT("/event/:id/segment/:segment_id", h.AddSegment)
 	authed.PUT("/event/:id", h.UpdateEvent)
 	authed.GET("/event/:id", h.FetchEvent)
 

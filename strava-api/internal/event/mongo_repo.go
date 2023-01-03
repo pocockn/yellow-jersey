@@ -64,7 +64,7 @@ func (m MongoRepository) Fetch(id string) (*Event, error) {
 	defer cancel()
 
 	var e *Event
-	err := m.events.FindOne(ctx, bson.M{"id": id}).Decode(&e)
+	err := m.events.FindOne(ctx, bson.M{"_id": id}).Decode(&e)
 	if err != nil {
 		return nil, fmt.Errorf("unable to fetch event %s from Mongo : %w", id, err)
 	}
@@ -94,7 +94,7 @@ func (m MongoRepository) Update(e *Event) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	filter := bson.D{{"id", e.ID}}
+	filter := bson.D{{"_id", e.ID}}
 	update := bson.M{
 		"$set": e,
 	}
