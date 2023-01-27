@@ -1,7 +1,6 @@
 import AuthenticationManager from "../services/authManager";
 import {useNavigate, useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
-import axios from "axios";
 import Sidebar from "../components/sidebar";
 import Header from "../components/header";
 import {Button} from "@mui/material";
@@ -15,6 +14,7 @@ const Event = () => {
         owner: "",
         name: "",
         users: [],
+        segment_ids: []
     })
     const [segments, setSegments] = useState({
         segments: {},
@@ -28,28 +28,38 @@ const Event = () => {
             navigate("/")
         }
 
-        fetchEvent();
-        fetchSegments()
+        fetchEvent().catch(err => console.log(err));
+        fetchSegments().catch(err => console.log(err));
     }, [])
 
     function handleClick(path) {
         navigate("/user/event/" + id + "/" + path);
     }
 
-    const fetchEvent = () => {
-        axios.get(`http://localhost:8080/user/event/` + id, {
-            headers: {Authorization: `Bearer ${authManager.getAccessToken()}`}
-        }).then(res => {
-            setEvent(res.data.event)
+    async function fetchEvent() {
+        const resp = await fetch(`http://localhost:8080/user/event/` + id, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                Authorization: `Bearer ${authManager.getAccessToken()}`,
+                'Content-Type': 'application/json'
+            },
         })
+        const event = await resp.json()
+        setEvent(event.event)
     }
 
-    const fetchSegments = () => {
-        axios.get(`http://localhost:8080/user/segments`, {
-            headers: {Authorization: `Bearer ${authManager.getAccessToken()}`}
-        }).then(res => {
-            setSegments(res.data.segments);
+    async function fetchSegments() {
+        const resp = await fetch(`http://localhost:8080/user/event/` + id + `/segments`, {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                Authorization: `Bearer ${authManager.getAccessToken()}`,
+                'Content-Type': 'application/json'
+            },
         })
+        const segments = await resp.json()
+        setSegments(segments.segments)
     }
 
     return (

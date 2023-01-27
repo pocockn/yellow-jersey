@@ -14,7 +14,7 @@ type Event struct {
 	ID         string   `json:"id" bson:"_id"`
 	Owner      string   `json:"owner" bson:"owner"`
 	Name       string   `json:"name" bson:"name"`
-	SegmentIDs []string `json:"segment_ids" bson:"segment_ids"`
+	SegmentIDs []int    `json:"segment_ids" bson:"segment_ids"`
 	Users      []string `json:"users" bson:"users"`
 
 	CreatedAt time.Time `json:"created_at" bson:"created_at"`

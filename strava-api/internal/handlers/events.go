@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
@@ -69,9 +70,13 @@ func (h *Handlers) FetchUserEvents(c echo.Context) error {
 // AddSegment adds a segment to an event.
 func (h *Handlers) AddSegment(c echo.Context) error {
 	id := c.Param("event_id")
-	segmentID := c.Param("segment_id")
-	if segmentID == "" || id == "" {
-		return fmt.Errorf("segment_id or event id can't be empty")
+	if id == "" {
+		return fmt.Errorf("event id can't be empty")
+	}
+
+	segmentIDInt, err := queryParamInt(c, "segment_id")
+	if err != nil {
+		return err
 	}
 
 	evt, err := h.events.FetchEvent(id)
@@ -80,18 +85,19 @@ func (h *Handlers) AddSegment(c echo.Context) error {
 	}
 
 	for _, segment := range evt.SegmentIDs {
-		if segmentID == segment {
-			logs.Logger.Info().Msgf("segment %s already added to event", segmentID)
-			return nil
+		if segmentIDInt == segment {
+			logs.Logger.Info().Msgf("segment %d already added to event", segmentIDInt)
+			return echo.NewHTTPError(http.StatusConflict, "segment already added to event")
+
 		}
 	}
 
-	evt.SegmentIDs = append(evt.SegmentIDs, segmentID)
+	evt.SegmentIDs = append(evt.SegmentIDs, segmentIDInt)
 
 	if err := h.events.UpdateEvent(evt); err != nil {
 		return err
 	}
-	logs.Logger.Info().Msgf("added segment %s to event %+v", id, segmentID)
+	logs.Logger.Info().Msgf("added segment %s to event %+v", id, segmentIDInt)
 
 	return nil
 }
@@ -109,4 +115,14 @@ func (h *Handlers) UpdateEvent(c echo.Context) error {
 	logs.Logger.Info().Msgf("updated event %+v", e)
 
 	return nil
+}
+
+func queryParamInt(c echo.Context, name string) (int, error) {
+	param := c.QueryParam(name)
+	result, err := strconv.Atoi(param)
+	if err != nil {
+		return 0, err
+	}
+
+	return result, nil
 }
