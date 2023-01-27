@@ -38,11 +38,11 @@ func (h *Handlers) StarredSegments(c echo.Context) error {
 	})
 }
 
-// DetailedSegments fetches a list of detailed segments from Strava based on a users starred segments.
-// We need the detailed view, so we get access to the Polylines of each segment. A polyline allows us to visualise the
+// DetailedSegmentsFromStarredSegments fetches a list of detailed segments from Strava based on a users starred segments.
+// We need the detailed view, so we get access to the Poly-lines of each segment. A polyline allows us to visualise the
 // segment on a map.
 // TODO: If we receive an error that we aren't authorised for Strava, create new access token.
-func (h *Handlers) DetailedSegments(c echo.Context) error {
+func (h *Handlers) DetailedSegmentsFromStarredSegments(c echo.Context) error {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)
 	id := claims["sub"].(string)
@@ -69,6 +69,39 @@ func (h *Handlers) DetailedSegments(c echo.Context) error {
 	}
 
 	detailedSegments, err := h.strava.GetSegments(u.AccessToken, segmentIDs)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"segments": detailedSegments,
+	})
+}
+
+// DetailedSegments fetches segments based off a list of IDs.
+func (h *Handlers) DetailedSegments(c echo.Context) error {
+	// TODO: Add a helper method for fetching JWT tokens from request
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	id := claims["sub"].(string)
+
+	logs.Logger.Info().Msgf("fetching segments for user %s", id)
+	u, err := h.user.FetchUser(id)
+	if err != nil {
+		return err
+	}
+
+	eventID := c.Param("event_id")
+	if eventID == "" {
+		return fmt.Errorf("event id can't be empty")
+	}
+
+	evt, err := h.events.FetchEvent(eventID)
+	if err != nil {
+		return err
+	}
+
+	detailedSegments, err := h.strava.GetSegments(u.AccessToken, evt.SegmentIDs)
 	if err != nil {
 		return err
 	}

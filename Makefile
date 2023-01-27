@@ -1,4 +1,4 @@
-.PHONY : up down
+.PHONY : up down up-api up-fe
 
 down:
 	@docker-compose down

@@ -3,10 +3,11 @@ import Sidebar from "./sidebar";
 import Header from "./header";
 import AuthenticationManager from "../services/authManager";
 import {useNavigate} from "react-router-dom";
+import {Alert, Snackbar} from "@mui/material";
 
 const CreateEvent = () => {
     const [eventName, setEventName] = useState("")
-    const [message, setMessage] = useState("");
+    const [open, setOpen] = useState(false);
     const authManager = new AuthenticationManager();
     const navigate = useNavigate();
 
@@ -15,6 +16,10 @@ const CreateEvent = () => {
             navigate("/")
         }
     })
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     let handleSubmit = async (e) => {
         e.preventDefault();
@@ -29,9 +34,8 @@ const CreateEvent = () => {
             await res
             if (res.status === 200) {
                 setEventName("");
-                setMessage("Event created successfully");
+                setOpen(true);
             } else {
-                setMessage("Error occurred creating event");
             }
         } catch (err) {
             console.log(err)
@@ -62,10 +66,21 @@ const CreateEvent = () => {
                                         />
                                     </div>
                                     <button type="submit" className="btn btn-success">Create</button>
-                                    <div className="message">{message ? <p>{message}</p> : null}</div>
                                 </form>
                             </div>
                         </div>
+                        <Snackbar
+                            anchorOrigin={{
+                                horizontal: "left",
+                                vertical: "bottom",
+                            }}
+                            open={open}
+                            autoHideDuration={3000}
+                        >
+                            <Alert onClose={handleClose} severity="success" sx={{width: '100%'}}>
+                                Event successfully created
+                            </Alert>
+                        </Snackbar>
                     </div>
                 </div>
             </div>

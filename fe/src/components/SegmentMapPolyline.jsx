@@ -36,8 +36,7 @@ const SegmentMapPolyline = (props, addSegment) => {
                 </Typography>
             </CardContent>
             <CardActions>
-                <Button size="small">Add</Button>
-                {props.addSegment !== null ?
+                {addSegment !== null ?
                     <Button onClick={() => props.addSegment(props.segment.id)} size="small">Add</Button> : null
                 }
             </CardActions>

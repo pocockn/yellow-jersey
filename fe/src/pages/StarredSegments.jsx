@@ -5,16 +5,25 @@ import Sidebar from "../components/sidebar";
 import Header from "../components/header";
 import {useNavigate, useParams} from "react-router-dom";
 import SegmentMapPolyline from "../components/SegmentMapPolyline";
+import {Alert, Snackbar} from "@mui/material";
 
 
 const Segments = () => {
     const authManager = new AuthenticationManager();
     const navigate = useNavigate();
     let {id} = useParams();
+    const [openSuccess, setOpenSuccess] = useState(false);
+    const [openExists, setOpenExists] = useState(false);
+
     const [segments, setSegments] = useState({
         segments: {},
         segment_ids: [],
     })
+
+    const handleClose = () => {
+        setOpenSuccess(false);
+        setOpenExists(false);
+    };
 
     useEffect(() => {
         if (authManager.getAccessToken() === "") {
@@ -28,7 +37,7 @@ const Segments = () => {
         axios.get(`http://localhost:8080/user/segments`, {
             headers: {Authorization: `Bearer ${authManager.getAccessToken()}`}
         }).then(res => {
-            const newState = data.map(obj => {
+            const newState = res.data.segments.map(obj => {
                 return {...obj, segments: res.data.segments};
             });
             setSegments(newState);
@@ -41,7 +50,13 @@ const Segments = () => {
             headers: {'Content-Type': 'application/json', Authorization: `Bearer ${authManager.getAccessToken()}`},
         };
         fetch(`http://localhost:8080/user/event/` + id + "/segment/" + segment_id, requestOptions)
-            .then(response => console.log(response))
+            .then(response => {
+                if (response.ok) {
+                    setOpenSuccess(true)
+                } else if (response.status === 409) {
+                    setOpenExists(true)
+                }
+            })
     }
 
     return (
@@ -61,12 +76,37 @@ const Segments = () => {
                             <hr></hr>
                         </div>
                         <div className="row">
-                            {segments.map((segment) => (
+                            {Array.isArray(segments)
+                                ? segments.map((segment) => (
                                 <div className="col-md-3">
                                     <SegmentMapPolyline segment={segment} addSegment={addSegment}/>
                                 </div>
-                            ))}
+                            )) : null }
                         </div>
+                        <Snackbar
+                            anchorOrigin={{
+                                horizontal: "left",
+                                vertical: "bottom",
+                            }}
+                            open={openSuccess}
+                            autoHideDuration={3000}
+                        >
+                            <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                                Segment successfully added
+                            </Alert>
+                        </Snackbar>
+                        <Snackbar
+                            anchorOrigin={{
+                                horizontal: "left",
+                                vertical: "bottom",
+                            }}
+                            open={openExists}
+                            autoHideDuration={3000}
+                        >
+                            <Alert onClose={handleClose} severity="warning" sx={{ width: '100%' }}>
+                                Segment has already been added to event
+                            </Alert>
+                        </Snackbar>
                     </div>
                 </div>
             </div>

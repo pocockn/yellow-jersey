@@ -24,7 +24,7 @@ func TestHandlers_UpdateEvent(t *testing.T) {
 
 	evt := new(event.Event)
 	evt.Name = "Croatia 2024"
-	evt.SegmentIDs = []string{"1", "2", "3"}
+	evt.SegmentIDs = []int{1, 2, 3}
 	evt.Users = []string{"1", "2", "3"}
 
 	eventMock := mocks.NewMockRepo(ctrl)
@@ -50,7 +50,7 @@ func TestHandlers_Add_Segment(t *testing.T) {
 
 	evt := new(event.Event)
 	evt.Name = "Croatia 2024"
-	evt.SegmentIDs = []string{"1234"}
+	evt.SegmentIDs = []int{1234}
 	evt.Users = []string{"1", "2", "3"}
 
 	eventMock := mocks.NewMockRepo(ctrl)
@@ -80,7 +80,7 @@ func TestHandlers_Add_Segment_Already_Added(t *testing.T) {
 
 	evt := new(event.Event)
 	evt.Name = "Croatia 2024"
-	evt.SegmentIDs = []string{"12345"}
+	evt.SegmentIDs = []int{12345}
 	evt.Users = []string{"1", "2", "3"}
 
 	eventMock := mocks.NewMockRepo(ctrl)
