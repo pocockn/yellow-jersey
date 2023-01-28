@@ -88,7 +88,6 @@ func (h *Handlers) AddSegment(c echo.Context) error {
 		if segmentIDInt == segment {
 			logs.Logger.Info().Msgf("segment %d already added to event", segmentIDInt)
 			return echo.NewHTTPError(http.StatusConflict, "segment already added to event")
-
 		}
 	}
 
@@ -98,6 +97,36 @@ func (h *Handlers) AddSegment(c echo.Context) error {
 		return err
 	}
 	logs.Logger.Info().Msgf("added segment %s to event %+v", id, segmentIDInt)
+
+	return nil
+}
+
+// AddUserToEvent adds a user to an event.
+func (h *Handlers) AddUserToEvent(c echo.Context) error {
+	eventID := c.Param("event_id")
+	userID := c.Param("user_id")
+	if eventID == "" || userID == "" {
+		return fmt.Errorf("event_id or user_id can't be empty")
+	}
+
+	evt, err := h.events.FetchEvent(eventID)
+	if err != nil {
+		return err
+	}
+
+	for _, user := range evt.Users {
+		if userID == user {
+			logs.Logger.Info().Msgf("user %s already added to event", userID)
+			return echo.NewHTTPError(http.StatusConflict, "user already added to event")
+		}
+	}
+
+	evt.Users = append(evt.Users, userID)
+
+	if err := h.events.UpdateEvent(evt); err != nil {
+		return err
+	}
+	logs.Logger.Info().Msgf("added user %s to event %+v", userID, eventID)
 
 	return nil
 }
