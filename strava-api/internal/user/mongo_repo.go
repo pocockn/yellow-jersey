@@ -101,7 +101,7 @@ func (m MongoRepository) UpdateUser(user *User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	filter := bson.D{{"_id", user.ID}}
+	filter := bson.D{{Key: "_id", Value: user.ID}}
 	update := bson.M{
 		"$set": user,
 	}

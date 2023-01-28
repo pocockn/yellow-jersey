@@ -95,7 +95,7 @@ func (m MongoRepository) Update(e *Event) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	filter := bson.D{{"_id", e.ID}}
+	filter := bson.D{{Key: "_id", Value: e.ID}}
 	update := bson.M{
 		"$set": e,
 	}

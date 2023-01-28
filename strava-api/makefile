@@ -50,3 +50,11 @@ regenerate: clean-mock generate
 
 vet:
 	@@GO111MODULE=on go vet "${PACKAGES}"
+
+fix:
+	@go fix ./...
+
+lint:
+	golangci-lint --version
+	golangci-lint cache clean
+	golangci-lint run --timeout=5m
