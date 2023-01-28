@@ -19,7 +19,7 @@ func New(strava *services.Strava, user *services.User, events *services.Events, 
 		strava: strava,
 		user:   user,
 		events: events,
-		// TODO: Set the expiry to how long Strava allows a token to be used
+		// TODO: Set the expiry to how long Strava allows a token to be used.
 		jwt: jwt.New(1000, jwtSecret),
 	}
 }

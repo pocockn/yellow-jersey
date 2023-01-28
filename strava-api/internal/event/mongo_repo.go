@@ -36,6 +36,7 @@ func NewMongoRepository(ctx context.Context, connectionString string) (*MongoRep
 	}, nil
 }
 
+// NewMongoRepoWithDB returns a new Mongo repo with the supplied Mongo database.
 func NewMongoRepoWithDB(db *mongo.Database) (*MongoRepository, error) {
 	users := db.Collection("events")
 	return &MongoRepository{

@@ -37,6 +37,15 @@ func NewMongoRepository(ctx context.Context, connectionString string) (*MongoRep
 	}, nil
 }
 
+// NewMongoRepoWithDB returns a new Mongo repo with the supplied Mongo database.
+func NewMongoRepoWithDB(db *mongo.Database) (*MongoRepository, error) {
+	users := db.Collection("users")
+	return &MongoRepository{
+		db:    db,
+		users: users,
+	}, nil
+}
+
 // CreateUser creates a new user in the MongoDB.
 func (m MongoRepository) CreateUser(accessToken, refreshToken, stravaID string) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

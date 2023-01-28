@@ -18,7 +18,7 @@ import (
 )
 
 func TestHandlers_UpdateEvent(t *testing.T) {
-	eventJSON := `{"name":"Croatia 2024","segment_ids": ["1","2","3"], "users": ["1","2","3"]}`
+	eventJSON := `{"name":"Croatia 2024","segment_ids": [1,2,3], "users": ["1","2","3"]}`
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -71,7 +71,7 @@ func TestHandlers_Add_Segment(t *testing.T) {
 	c.SetParamValues("1234", "12345")
 
 	h := handlers.New(nil, nil, eventsSrv, "secret")
-	assert.NoError(t, h.AddSegment(c))
+	assert.NoError(t, h.AddSegmentToEvent(c))
 }
 
 func TestHandlers_Add_User(t *testing.T) {
@@ -157,5 +157,5 @@ func TestHandlers_Add_Segment_Already_Added(t *testing.T) {
 	c.SetParamValues("1234", "12345")
 
 	h := handlers.New(nil, nil, eventsSrv, "secret")
-	assert.Error(t, h.AddSegment(c))
+	assert.Error(t, h.AddSegmentToEvent(c))
 }

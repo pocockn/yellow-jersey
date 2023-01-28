@@ -67,14 +67,14 @@ func (h *Handlers) FetchUserEvents(c echo.Context) error {
 	})
 }
 
-// AddSegment adds a segment to an event.
-func (h *Handlers) AddSegment(c echo.Context) error {
+// AddSegmentToEvent adds a segment to an event.
+func (h *Handlers) AddSegmentToEvent(c echo.Context) error {
 	id := c.Param("event_id")
 	if id == "" {
 		return fmt.Errorf("event id can't be empty")
 	}
 
-	segmentIDInt, err := queryParamInt(c, "segment_id")
+	segmentIDInt, err := pathParamInt(c, "segment_id")
 	if err != nil {
 		return err
 	}
@@ -146,8 +146,8 @@ func (h *Handlers) UpdateEvent(c echo.Context) error {
 	return nil
 }
 
-func queryParamInt(c echo.Context, name string) (int, error) {
-	param := c.QueryParam(name)
+func pathParamInt(c echo.Context, name string) (int, error) {
+	param := c.Param(name)
 	result, err := strconv.Atoi(param)
 	if err != nil {
 		return 0, err
