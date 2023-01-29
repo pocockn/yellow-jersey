@@ -9,6 +9,7 @@ import CreateEvent from "./components/CreateEvent";
 import Events from "./pages/Events";
 import Event from "./pages/Event";
 import Segments from "./pages/StarredSegments";
+import AddUsers from "./pages/AddUsers";
 
 function App() {
     return (
@@ -19,6 +20,7 @@ function App() {
             <Route path="/user/events" element={<Events/>}/>
             <Route path="/user/event/:id" element={<Event/>}/>
             <Route path="/user/event/:id/add-segments" element={<Segments/>}/>
+            <Route path="/user/event/:id/add-users" element={<AddUsers/>}/>
 
             <Route path="/callback" element={<StravaCallback/>}/>
             <Route path="/profile" element={<Profile/>}/>

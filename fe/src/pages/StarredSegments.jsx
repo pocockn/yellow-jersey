@@ -78,7 +78,7 @@ const Segments = () => {
                         <div className="row">
                             {Array.isArray(segments)
                                 ? segments.map((segment) => (
-                                <div className="col-md-3">
+                                <div className="col-md-3" key={segment.id}>
                                     <SegmentMapPolyline segment={segment} addSegment={addSegment}/>
                                 </div>
                             )) : null }
