@@ -44,6 +44,22 @@ func TestUser_FetchUser(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestUser_FetchAll(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	userMock := mocks.NewMockRepository(ctrl)
+	userMock.EXPECT().FetchAll().
+		Return([]*user.User{{ID: "1"}, {ID: "2"}}, nil).Times(1)
+
+	srv, err := services.NewUser(services.WithUserRepository(userMock))
+	require.NoError(t, err)
+
+	usrs, err := srv.FetchAll()
+	require.NoError(t, err)
+	assert.Len(t, usrs, 2)
+}
+
 func TestUser_FetchUserByStravaID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()

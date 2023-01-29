@@ -9,6 +9,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"yellow-jersey/pkg/logs"
 )
 
 // Ensure MongoRepository implements the Repository interface
@@ -31,6 +33,15 @@ func NewMongoRepository(ctx context.Context, connectionString string) (*MongoRep
 	db := client.Database("yellow-jersey")
 	users := db.Collection("users")
 
+	return &MongoRepository{
+		db:    db,
+		users: users,
+	}, nil
+}
+
+// NewMongoRepoWithDB returns a new Mongo repo with the supplied Mongo database.
+func NewMongoRepoWithDB(db *mongo.Database) (*MongoRepository, error) {
+	users := db.Collection("users")
 	return &MongoRepository{
 		db:    db,
 		users: users,
@@ -87,12 +98,44 @@ func (m MongoRepository) FetchUserByStravaID(stravaID string) (*User, error) {
 	return u, nil
 }
 
+// FetchAll fetches all users from the system.
+// TODO: Should be limited with pagination in future.
+func (m MongoRepository) FetchAll() ([]*User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	cur, err := m.users.Find(ctx, bson.D{})
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			logs.Logger.Info().Msg("no users found in the db")
+			return nil, nil
+		}
+		return nil, fmt.Errorf("unable to fetch users from Mongo : %w", err)
+	}
+
+	var users []*User
+	for cur.Next(context.Background()) {
+		var user *User
+		err := cur.Decode(&user)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+
+	if err := cur.Close(context.Background()); err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
 // UpdateUser updates the user within Mongo.
 func (m MongoRepository) UpdateUser(user *User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	filter := bson.D{{"_id", user.ID}}
+	filter := bson.D{{Key: "_id", Value: user.ID}}
 	update := bson.M{
 		"$set": user,
 	}

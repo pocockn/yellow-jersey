@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
 
 	"yellow-jersey/internal/event"
@@ -15,10 +14,7 @@ import (
 
 // CreateEvent creates a new internal event.
 func (h *Handlers) CreateEvent(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	id := claims["sub"].(string)
-
+	id := extractUserIDFromRequest(c)
 	logs.Logger.Info().Msgf("creating event for user %s", id)
 
 	var evt event.Event
@@ -51,10 +47,7 @@ func (h *Handlers) FetchEvent(c echo.Context) error {
 
 // FetchUserEvents fetches all events for a user.
 func (h *Handlers) FetchUserEvents(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	id := claims["sub"].(string)
-
+	id := extractUserIDFromRequest(c)
 	logs.Logger.Info().Msgf("fetching events for user %s", id)
 
 	evts, err := h.events.FetchUserEvents(id)
@@ -67,14 +60,26 @@ func (h *Handlers) FetchUserEvents(c echo.Context) error {
 	})
 }
 
-// AddSegment adds a segment to an event.
-func (h *Handlers) AddSegment(c echo.Context) error {
+// GetUsers gets all users to add to an event.
+func (h *Handlers) GetUsers(c echo.Context) error {
+	usrs, err := h.user.FetchAll()
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"users": usrs,
+	})
+}
+
+// AddSegmentToEvent adds a segment to an event.
+func (h *Handlers) AddSegmentToEvent(c echo.Context) error {
 	id := c.Param("event_id")
 	if id == "" {
 		return fmt.Errorf("event id can't be empty")
 	}
 
-	segmentIDInt, err := queryParamInt(c, "segment_id")
+	segmentIDInt, err := pathParamInt(c, "segment_id")
 	if err != nil {
 		return err
 	}
@@ -88,7 +93,6 @@ func (h *Handlers) AddSegment(c echo.Context) error {
 		if segmentIDInt == segment {
 			logs.Logger.Info().Msgf("segment %d already added to event", segmentIDInt)
 			return echo.NewHTTPError(http.StatusConflict, "segment already added to event")
-
 		}
 	}
 
@@ -98,6 +102,36 @@ func (h *Handlers) AddSegment(c echo.Context) error {
 		return err
 	}
 	logs.Logger.Info().Msgf("added segment %s to event %+v", id, segmentIDInt)
+
+	return nil
+}
+
+// AddUserToEvent adds a user to an event.
+func (h *Handlers) AddUserToEvent(c echo.Context) error {
+	eventID := c.Param("event_id")
+	userID := c.Param("user_id")
+	if eventID == "" || userID == "" {
+		return fmt.Errorf("event_id or user_id can't be empty")
+	}
+
+	evt, err := h.events.FetchEvent(eventID)
+	if err != nil {
+		return err
+	}
+
+	for _, user := range evt.Users {
+		if userID == user {
+			logs.Logger.Info().Msgf("user %s already added to event", userID)
+			return echo.NewHTTPError(http.StatusConflict, "user already added to event")
+		}
+	}
+
+	evt.Users = append(evt.Users, userID)
+
+	if err := h.events.UpdateEvent(evt); err != nil {
+		return err
+	}
+	logs.Logger.Info().Msgf("added user %s to event %+v", userID, eventID)
 
 	return nil
 }
@@ -117,8 +151,8 @@ func (h *Handlers) UpdateEvent(c echo.Context) error {
 	return nil
 }
 
-func queryParamInt(c echo.Context, name string) (int, error) {
-	param := c.QueryParam(name)
+func pathParamInt(c echo.Context, name string) (int, error) {
+	param := c.Param(name)
 	result, err := strconv.Atoi(param)
 	if err != nil {
 		return 0, err

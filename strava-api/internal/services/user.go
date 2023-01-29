@@ -67,6 +67,11 @@ func (u *User) FetchUser(id string) (*user.User, error) {
 	return usr, nil
 }
 
+// FetchAll fetches all users from the system.
+func (u *User) FetchAll() ([]*user.User, error) {
+	return u.repo.FetchAll()
+}
+
 // FetchUserByStravaID fetches a user via their Strava ID.
 func (u *User) FetchUserByStravaID(id string) (*user.User, error) {
 	usr, err := u.repo.FetchUserByStravaID(id)

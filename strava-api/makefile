@@ -24,9 +24,9 @@ clean-mock:
 
 ## generate: runs go generate
 generate:
-	@command -v mockgen > /dev/null || \
-		go install github.com/golang/mock/mockgen@v1.6.0
-	@go generate -v ./...
+	export PATH=$PATH:$(go env GOPATH)/bin
+	go install github.com/golang/mock/mockgen@v1.6.0
+	go generate -v ./...
 
 install:
 	@echo "=> Install dependencies"
@@ -50,3 +50,11 @@ regenerate: clean-mock generate
 
 vet:
 	@@GO111MODULE=on go vet "${PACKAGES}"
+
+fix:
+	@go fix ./...
+
+lint:
+	golangci-lint --version
+	golangci-lint cache clean
+	golangci-lint run --timeout=5m

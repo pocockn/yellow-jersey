@@ -1,23 +1,25 @@
 import AuthenticationManager from "../services/authManager";
 import React, {useEffect, useState} from "react";
-import axios from "axios";
 import Sidebar from "../components/sidebar";
 import Header from "../components/header";
 import {useNavigate, useParams} from "react-router-dom";
-import SegmentMapPolyline from "../components/SegmentMapPolyline";
 import {Alert, Snackbar} from "@mui/material";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import CardActions from "@mui/material/CardActions";
+import Button from "@mui/material/Button";
+import Card from "@mui/material/Card";
 
 
-const Segments = () => {
+const AddUsers = () => {
     const authManager = new AuthenticationManager();
     const navigate = useNavigate();
     let {id} = useParams();
     const [openSuccess, setOpenSuccess] = useState(false);
     const [openExists, setOpenExists] = useState(false);
 
-    const [segments, setSegments] = useState({
-        segments: {},
-        segment_ids: [],
+    const [users, setUsers] = useState({
+        users: {},
     })
 
     const handleClose = () => {
@@ -30,26 +32,28 @@ const Segments = () => {
             navigate("/")
         }
 
-        fetchSegments();
+        fetchUsers().catch(err => console.log(err));
     }, [])
 
-    const fetchSegments = () => {
-        axios.get(`http://localhost:8080/user/segments`, {
-            headers: {Authorization: `Bearer ${authManager.getAccessToken()}`}
-        }).then(res => {
-            const newState = res.data.segments.map(obj => {
-                return {...obj, segments: res.data.segments};
-            });
-            setSegments(newState);
+    async function fetchUsers() {
+        const resp = await fetch(`http://localhost:8080/user/users`, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                Authorization: `Bearer ${authManager.getAccessToken()}`,
+            },
         })
+        const respJSON = await resp.json()
+        console.log(respJSON)
+        setUsers(respJSON.users)
     }
 
-    const addSegment = (segment_id) => {
+    const addUser = (user_id) => {
         const requestOptions = {
             method: 'PUT',
             headers: {'Content-Type': 'application/json', Authorization: `Bearer ${authManager.getAccessToken()}`},
         };
-        fetch(`http://localhost:8080/user/event/` + id + "/segment/" + segment_id, requestOptions)
+        fetch(`http://localhost:8080/user/event/` + id + "/users/" + user_id, requestOptions)
             .then(response => {
                 if (response.ok) {
                     setOpenSuccess(true)
@@ -67,21 +71,30 @@ const Segments = () => {
                     {<Header/>}
                     <div className="container-fluid">
                         <div className="d-sm-flex align-items-center justify-content-between mb-4">
-                            <h1 className="h3 mb-0 text-gray-800">Add segments to event</h1>
+                            <h1 className="h3 mb-0 text-gray-800">Add Users to event</h1>
                         </div>
                         <div className="d-sm-4 align-items-center justify-content-between mb-4">
-                            <p>Below are a list of your starred segments on Strava. Add the segment to your event to
-                                include it in your race. The user with the lowest time on all included segments is the
-                                yellow jersey!</p>
+                            <p>Below are a list of users on Yellow-Jersey. Add the user to your event to allow them
+                                to compete.</p>
                             <hr></hr>
                         </div>
                         <div className="row">
-                            {Array.isArray(segments)
-                                ? segments.map((segment) => (
-                                <div className="col-md-3" key={segment.id}>
-                                    <SegmentMapPolyline segment={segment} addSegment={addSegment}/>
-                                </div>
-                            )) : null }
+                            {Array.isArray(users)
+                                ? users.map((user) => (
+                                    <div className="col-md-3" key={user.id}>
+                                        <Card sx={{m: 2}}>
+                                            <CardContent>
+                                                <hr></hr>
+                                                <Typography gutterBottom variant="h7" component="div">
+                                                    {user.id}
+                                                </Typography>
+                                            </CardContent>
+                                            <CardActions>
+                                                <Button onClick={() => addUser(user.id)} size="small">Add</Button>
+                                            </CardActions>
+                                        </Card>
+                                    </div>
+                                )) : null}
                         </div>
                         <Snackbar
                             anchorOrigin={{
@@ -91,7 +104,7 @@ const Segments = () => {
                             open={openSuccess}
                             autoHideDuration={3000}
                         >
-                            <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                            <Alert onClose={handleClose} severity="success" sx={{width: '100%'}}>
                                 Segment successfully added
                             </Alert>
                         </Snackbar>
@@ -103,7 +116,7 @@ const Segments = () => {
                             open={openExists}
                             autoHideDuration={3000}
                         >
-                            <Alert onClose={handleClose} severity="warning" sx={{ width: '100%' }}>
+                            <Alert onClose={handleClose} severity="warning" sx={{width: '100%'}}>
                                 Segment has already been added to event
                             </Alert>
                         </Snackbar>
@@ -115,4 +128,4 @@ const Segments = () => {
 
 }
 
-export default Segments;
+export default AddUsers;

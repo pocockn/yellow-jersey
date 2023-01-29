@@ -74,11 +74,16 @@ const Event = () => {
                         </div>
                         <hr></hr>
                         <p>{event.users}</p>
-                        <Button size="small" variant="outlined" endIcon={<AddIcon/>}> Add Users </Button>
+                        <Button
+                            size="small"
+                            variant="outlined"
+                            onClick={() => handleClick("add-users")}
+                            endIcon={<AddIcon/>}> Add Users
+                        </Button>
                         <hr></hr>
                         {Array.isArray(segments)
                             ? segments.map((segment) => (
-                                <div className="col-md-3">
+                                <div className="col-md-3" key={segment.id}>
                                     <SegmentMapPolyline segment={segment} addSegment={null}/>
                                 </div>
                             )) : null}
