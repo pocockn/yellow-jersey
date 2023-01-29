@@ -25,6 +25,7 @@ func (h *Handlers) Register(e *echo.Echo) {
 	authed.Use(jwt)
 	authed.GET("/routes", h.Routes)
 	authed.GET("/segments", h.DetailedSegmentsFromStarredSegments)
+	authed.GET("/users", h.GetUsers)
 
 	authed.POST("/create-event", h.CreateEvent)
 	authed.GET("/events", h.FetchUserEvents)

@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
 
 	"yellow-jersey/internal/event"
@@ -15,10 +14,7 @@ import (
 
 // CreateEvent creates a new internal event.
 func (h *Handlers) CreateEvent(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	id := claims["sub"].(string)
-
+	id := extractUserIDFromRequest(c)
 	logs.Logger.Info().Msgf("creating event for user %s", id)
 
 	var evt event.Event
@@ -51,10 +47,7 @@ func (h *Handlers) FetchEvent(c echo.Context) error {
 
 // FetchUserEvents fetches all events for a user.
 func (h *Handlers) FetchUserEvents(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	id := claims["sub"].(string)
-
+	id := extractUserIDFromRequest(c)
 	logs.Logger.Info().Msgf("fetching events for user %s", id)
 
 	evts, err := h.events.FetchUserEvents(id)
@@ -64,6 +57,18 @@ func (h *Handlers) FetchUserEvents(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, echo.Map{
 		"events": evts,
+	})
+}
+
+// GetUsers gets all users to add to an event.
+func (h *Handlers) GetUsers(c echo.Context) error {
+	usrs, err := h.user.FetchAll()
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"users": usrs,
 	})
 }
 

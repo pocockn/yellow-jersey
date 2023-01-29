@@ -1,6 +1,6 @@
 package event
 
-//go:generate mockgen -source=$GOFILE -destination=../mocks/mock_event_$GOFILE -package=mocks
+//go:generate mockgen -source=$GOFILE -destination=../../mocks/mock_event_$GOFILE -package=mocks
 
 // Repo holds methods related to Event database actions.
 type Repo interface {

@@ -89,6 +89,22 @@ func TestMain(m *testing.M) {
 	os.Exit(exitCode)
 }
 
+// TODO: Reset the database after each test, we currently work with the previous DB for each new test.
+func TestMongoRepository_FetchAll(t *testing.T) {
+	mongo, err := user.NewMongoRepoWithDB(db)
+	assert.NoError(t, err)
+
+	_, err = mongo.CreateUser("token", "refresh_token", "strava_id")
+	assert.NoError(t, err)
+
+	_, err = mongo.CreateUser("token", "refresh_token", "strava_id_2")
+	assert.NoError(t, err)
+
+	usrs, err := mongo.FetchAll()
+	assert.NoError(t, err)
+	assert.Len(t, usrs, 2)
+}
+
 func TestMongoRepository_Create(t *testing.T) {
 	mongo, err := user.NewMongoRepoWithDB(db)
 	assert.NoError(t, err)

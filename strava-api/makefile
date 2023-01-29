@@ -24,9 +24,8 @@ clean-mock:
 
 ## generate: runs go generate
 generate:
-	@command -v mockgen > /dev/null || \
-		go install github.com/golang/mock/mockgen@v1.6.0
-	@go generate -v ./...
+	go install github.com/golang/mock/mockgen@v1.6.0
+	go generate -v ./...
 
 install:
 	@echo "=> Install dependencies"

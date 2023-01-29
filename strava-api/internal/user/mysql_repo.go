@@ -50,6 +50,11 @@ func (m *MySQLRepository) FetchUserByStravaID(id string) (*User, error) {
 	return fetchedUser, nil
 }
 
+// FetchAll fetches all users. Needs to be implemented for MySQL.
+func (m *MySQLRepository) FetchAll() ([]*User, error) {
+	return nil, nil
+}
+
 // UpdateUser updates a user within the database.
 func (m *MySQLRepository) UpdateUser(u *User) error {
 	if err := m.db.Save(u).Error; err != nil {

@@ -13,6 +13,7 @@ import (
 	"yellow-jersey/internal/event"
 	"yellow-jersey/internal/handlers"
 	"yellow-jersey/internal/services"
+	"yellow-jersey/internal/user"
 	"yellow-jersey/mocks"
 	"yellow-jersey/testutil"
 )
@@ -158,4 +159,25 @@ func TestHandlers_Add_Segment_Already_Added(t *testing.T) {
 
 	h := handlers.New(nil, nil, eventsSrv, "secret")
 	assert.Error(t, h.AddSegmentToEvent(c))
+}
+
+func TestHandlers_GetUsers(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	usersMock := mocks.NewMockRepository(ctrl)
+	usersMock.EXPECT().FetchAll().
+		Return([]*user.User{{ID: "1"}, {ID: "2"}}, nil).Times(1)
+
+	userService, err := services.NewUser(services.WithUserRepository(usersMock))
+	assert.NoError(t, err)
+
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodPut, "/", testutil.NoopCloser{})
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+
+	h := handlers.New(nil, userService, nil, "secret")
+	assert.NoError(t, h.GetUsers(c))
 }
