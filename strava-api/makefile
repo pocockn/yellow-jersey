@@ -24,6 +24,7 @@ clean-mock:
 
 ## generate: runs go generate
 generate:
+	export PATH=$PATH:$(go env GOPATH)/bin
 	go install github.com/golang/mock/mockgen@v1.6.0
 	go generate -v ./...
 

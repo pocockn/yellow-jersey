@@ -25,7 +25,7 @@ type AuthRequest struct {
 func (h *Handlers) Authorize(c echo.Context) error {
 	if c.Request().FormValue("error") == "access_denied" {
 		logs.Logger.Error().Msg("access denied")
-		return nil
+		return fmt.Errorf("access denied from Strava")
 	}
 
 	body, err := io.ReadAll(c.Request().Body)
