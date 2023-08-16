@@ -46,12 +46,16 @@ func NewMongoRepoWithDB(db *mongo.Database) (*MongoRepository, error) {
 }
 
 // Create creates a new event in the MongoDB.
-func (m MongoRepository) Create(owner, name string) (*Event, error) {
+func (m MongoRepository) Create(owner, name string, startDate, finishDate time.Time) (*Event, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	event := NewEvent(owner, name)
-	_, err := m.events.InsertOne(ctx, event)
+	event, err := NewEvent(owner, name, startDate, finishDate)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = m.events.InsertOne(ctx, event)
 	if err != nil {
 		return nil, fmt.Errorf("problem creating event for user %s within Mongo : %w", owner, err)
 	}

@@ -19,14 +19,14 @@ import (
 )
 
 func TestHandlers_UpdateEvent(t *testing.T) {
-	eventJSON := `{"name":"Croatia 2024","segment_ids": [1,2,3], "users": ["1","2","3"]}`
+	eventJSON := `{"name":"Croatia 2024","segment_ids": [1,2,3], "users": [{"ID":"1"},{"ID":"2"},{"ID":"3"}]}`
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	evt := new(event.Event)
 	evt.Name = "Croatia 2024"
 	evt.SegmentIDs = []int{1, 2, 3}
-	evt.Users = []string{"1", "2", "3"}
+	evt.Users = []user.User{{ID: "1"}, {ID: "2"}, {ID: "3"}}
 
 	eventMock := mocks.NewMockRepo(ctrl)
 	eventMock.EXPECT().Update(evt).
@@ -52,7 +52,7 @@ func TestHandlers_Add_Segment(t *testing.T) {
 	evt := new(event.Event)
 	evt.Name = "Croatia 2024"
 	evt.SegmentIDs = []int{1234}
-	evt.Users = []string{"1", "2", "3"}
+	evt.Users = []user.User{{ID: "1"}, {ID: "2"}, {ID: "3"}}
 
 	eventMock := mocks.NewMockRepo(ctrl)
 	eventMock.EXPECT().Fetch("1234").Return(evt, nil)
@@ -82,13 +82,19 @@ func TestHandlers_Add_User(t *testing.T) {
 	evt := new(event.Event)
 	evt.Name = "Croatia 2024"
 	evt.SegmentIDs = []int{1234}
-	evt.Users = []string{"1", "2", "3"}
+	evt.Users = []user.User{{ID: "1"}, {ID: "2"}, {ID: "3"}}
 
 	eventMock := mocks.NewMockRepo(ctrl)
 	eventMock.EXPECT().Fetch("1234").Return(evt, nil)
 	eventMock.EXPECT().Update(evt).
 		Return(nil).Times(1)
 
+	// TODO: Change mock constructor name to include the type
+	userMock := mocks.NewMockRepository(ctrl)
+	userMock.EXPECT().FetchUser("12345").Return(&user.User{ID: "12345"}, nil)
+
+	userSrv, err := services.NewUser(services.WithUserRepository(userMock))
+	assert.NoError(t, err)
 	eventsSrv, err := services.NewEvent(services.WithEventsRepository(eventMock))
 	assert.NoError(t, err)
 
@@ -101,7 +107,7 @@ func TestHandlers_Add_User(t *testing.T) {
 	c.SetParamNames("event_id", "user_id")
 	c.SetParamValues("1234", "12345")
 
-	h := handlers.New(nil, nil, eventsSrv, "secret")
+	h := handlers.New(nil, userSrv, eventsSrv, "secret")
 	assert.NoError(t, h.AddUserToEvent(c))
 }
 
@@ -112,7 +118,7 @@ func TestHandlers_Add_User_Already_Added(t *testing.T) {
 	evt := new(event.Event)
 	evt.Name = "Croatia 2024"
 	evt.SegmentIDs = []int{12345}
-	evt.Users = []string{"1", "2", "3"}
+	evt.Users = []user.User{{ID: "1"}, {ID: "2"}, {ID: "3"}}
 
 	eventMock := mocks.NewMockRepo(ctrl)
 	eventMock.EXPECT().Fetch("1234").Return(evt, nil)
@@ -140,7 +146,7 @@ func TestHandlers_Add_Segment_Already_Added(t *testing.T) {
 	evt := new(event.Event)
 	evt.Name = "Croatia 2024"
 	evt.SegmentIDs = []int{12345}
-	evt.Users = []string{"1", "2", "3"}
+	evt.Users = []user.User{{ID: "1"}, {ID: "2"}, {ID: "3"}}
 
 	eventMock := mocks.NewMockRepo(ctrl)
 	eventMock.EXPECT().Fetch("1234").Return(evt, nil)

@@ -18,7 +18,8 @@ export default function EventsTable({events, handleRoute}) {
                     <TableRow>
                         <TableCell>Name</TableCell>
                         <TableCell align="right">Participants</TableCell>
-                        <TableCell align="right">Created At</TableCell>
+                        <TableCell align="right">Start Date</TableCell>
+                        <TableCell align="right">Finish Date</TableCell>
                         <TableCell align="right">Edit</TableCell>
                     </TableRow>
                 </TableHead>
@@ -33,7 +34,8 @@ export default function EventsTable({events, handleRoute}) {
                                 {row.name}
                             </TableCell>
                             <TableCell align="right">{Array.isArray(row.users) ? row.users.length : ""}</TableCell>
-                            <TableCell align="right">{row.created_at}</TableCell>
+                            <TableCell align="right">{new Date(row.start_date).toLocaleDateString()}</TableCell>
+                            <TableCell align="right">{new Date(row.finish_date).toLocaleDateString() }</TableCell>
                             <TableCell align="right">
                                 <Button size="small" variant="outlined"
                                         onClick={() => handleRoute(row.id)} endIcon={<EditIcon/>}>

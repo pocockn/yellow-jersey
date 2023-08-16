@@ -7,6 +7,8 @@ import {Alert, Snackbar} from "@mui/material";
 
 const CreateEvent = () => {
     const [eventName, setEventName] = useState("")
+    const [startDate, setStartDate] = useState("")
+    const [finishDate, setFinishDate] = useState("")
     const [open, setOpen] = useState(false);
     const authManager = new AuthenticationManager();
     const navigate = useNavigate();
@@ -29,11 +31,15 @@ const CreateEvent = () => {
                 method: "POST",
                 body: JSON.stringify({
                     name: eventName,
+                    start_date: new Date(startDate),
+                    finish_date: new Date(finishDate)
                 }),
             });
             await res
             if (res.status === 200) {
                 setEventName("");
+                setStartDate("");
+                setFinishDate("");
                 setOpen(true);
             } else {
             }
@@ -63,6 +69,20 @@ const CreateEvent = () => {
                                             className="form-control"
                                             type="text"
                                             onChange={(e) => setEventName(e.target.value)}
+                                        />
+                                        <label>Start Date</label>
+                                        <input
+                                            type="date"
+                                            className="form-control date"
+                                            name="start"
+                                            onChange={(e) => setStartDate(e.target.value)}
+                                        />
+                                        <label>Finish Date</label>
+                                        <input
+                                            type="date"
+                                            className="form-control date"
+                                            name="finish"
+                                            onChange={(e) => setFinishDate(e.target.value)}
                                         />
                                     </div>
                                     <button type="submit" className="btn btn-success">Create</button>

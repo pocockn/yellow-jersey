@@ -58,7 +58,17 @@ func (h *Handlers) Authorize(c echo.Context) error {
 		return h.generateJWT(c, u.ID)
 	}
 
-	userID, err := h.user.CreateUser(resp.AccessToken, resp.RefreshToken, strconv.FormatInt(resp.Athlete.Id, 10))
+	athlete, err := h.strava.GetAthleteDetailed(int(resp.Athlete.Id), resp.AccessToken)
+	if err != nil {
+		return err
+	}
+
+	userID, err := h.user.CreateUser(
+		resp.AccessToken,
+		resp.RefreshToken,
+		strconv.FormatInt(resp.Athlete.Id, 10),
+		athlete,
+	)
 	if err != nil {
 		return err
 	}

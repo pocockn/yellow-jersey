@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
+	"yellow-jersey/internal/strava"
 	"yellow-jersey/pkg/logs"
 )
 
@@ -49,11 +50,11 @@ func NewMongoRepoWithDB(db *mongo.Database) (*MongoRepository, error) {
 }
 
 // CreateUser creates a new user in the MongoDB.
-func (m MongoRepository) CreateUser(accessToken, refreshToken, stravaID string) (*User, error) {
+func (m MongoRepository) CreateUser(accessToken, refreshToken, stravaID string, ath strava.AthleteDetailed) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	user := NewUser(accessToken, refreshToken, stravaID)
+	user := NewUser(accessToken, refreshToken, stravaID, ath)
 	_, err := m.users.InsertOne(ctx, user)
 	if err != nil {
 		return nil, fmt.Errorf("problem creating user with Strava ID %s within Mongo : %w", stravaID, err)

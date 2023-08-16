@@ -1,6 +1,8 @@
 package services
 
 import (
+	"time"
+
 	"yellow-jersey/internal/event"
 	"yellow-jersey/pkg/logs"
 )
@@ -36,8 +38,8 @@ func WithEventsRepository(er event.Repo) EventsConfig {
 }
 
 // CreateEvent creates a user within our database after a successful oauth2 authentication with Strava.
-func (e *Events) CreateEvent(owner, name string) (string, error) {
-	evt, err := e.repo.Create(owner, name)
+func (e *Events) CreateEvent(owner, name string, startDate, finishDate time.Time) (string, error) {
+	evt, err := e.repo.Create(owner, name, startDate, finishDate)
 	if err != nil {
 		return "", err
 	}

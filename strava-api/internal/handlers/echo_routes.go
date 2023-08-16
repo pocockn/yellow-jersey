@@ -31,6 +31,7 @@ func (h *Handlers) Register(e *echo.Echo) {
 	authed.GET("/events", h.FetchUserEvents)
 	authed.POST("/event/:event_id/segments", h.DetailedSegments)
 	authed.PUT("/event/:event_id/segment/:segment_id", h.AddSegmentToEvent)
+	authed.POST("/event/:event_id/segments/populate", h.AddUserSegmentTimesToEvent)
 	authed.PUT("/event/:event_id/users/:user_id", h.AddUserToEvent)
 	authed.PUT("/event/:event_id", h.UpdateEvent)
 	authed.GET("/event/:event_id", h.FetchEvent)

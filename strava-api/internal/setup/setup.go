@@ -57,6 +57,9 @@ func Setup() (*echo.Echo, error) {
 			AllowMethods: []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete},
 		}),
 		iMid.LoggerZerolog(logs.Logger),
+		middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {
+			logs.Logger.Debug().Msgf("API Dump: Request=%q, Response=%q", reqBody, resBody)
+		}),
 	)
 	h.Register(e)
 
