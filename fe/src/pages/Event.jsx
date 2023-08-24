@@ -45,12 +45,12 @@ const Event = () => {
     }
 
     function getSegmentCompleteCount(userID) {
-        return event.segment_efforts[userID].length;
+        return event.segment_efforts[userID]?.length;
     }
 
     function getTotalSegmentTimes(userID) {
         let totalTime = 0;
-        event.segment_efforts[userID].map((segment) =>
+        event.segment_efforts[userID]?.map((segment) =>
             totalTime += segment.elapsed_time
         )
         return totalTime;
