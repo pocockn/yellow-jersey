@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"testing"
+	"time"
 
 	"yellow-jersey/internal/event"
 
@@ -87,7 +88,7 @@ func TestMongoRepository_Create(t *testing.T) {
 	mongo, err := event.NewMongoRepoWithDB(db)
 	assert.NoError(t, err)
 
-	event, err := mongo.Create("test", "event_name")
+	event, err := mongo.Create("test", "event_name", time.Now(), time.Now().Add(24*time.Hour))
 	assert.NoError(t, err)
 	assert.Equal(t, "test", event.Owner)
 	assert.Equal(t, "event_name", event.Name)
@@ -97,7 +98,7 @@ func TestMongoRepository_Fetch(t *testing.T) {
 	mongo, err := event.NewMongoRepoWithDB(db)
 	assert.NoError(t, err)
 
-	event, err := mongo.Create("test", "event_name")
+	event, err := mongo.Create("test", "event_name", time.Now(), time.Now().Add(24*time.Hour))
 	assert.NoError(t, err)
 	assert.Equal(t, "test", event.Owner)
 
@@ -110,7 +111,7 @@ func TestMongoRepository_Update(t *testing.T) {
 	mongo, err := event.NewMongoRepoWithDB(db)
 	assert.NoError(t, err)
 
-	event, err := mongo.Create("test", "event_name")
+	event, err := mongo.Create("test", "event_name", time.Now(), time.Now().Add(24*time.Hour))
 	assert.NoError(t, err)
 	assert.Equal(t, "test", event.Owner)
 

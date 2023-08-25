@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
 
 	"yellow-jersey/internal/event"
@@ -23,7 +24,8 @@ func (h *Handlers) CreateEvent(c echo.Context) error {
 		return err
 	}
 
-	evtID, err := h.events.CreateEvent(id, evt.Name)
+	// TODO: Send down the full event struct rather than individual fields.
+	evtID, err := h.events.CreateEvent(id, evt.Name, evt.StartDate, evt.FinishDate)
 	if err != nil {
 		return err
 	}
@@ -89,20 +91,64 @@ func (h *Handlers) AddSegmentToEvent(c echo.Context) error {
 		return err
 	}
 
-	for _, segment := range evt.SegmentIDs {
-		if segmentIDInt == segment {
-			logs.Logger.Info().Msgf("segment %d already added to event", segmentIDInt)
-			return echo.NewHTTPError(http.StatusConflict, "segment already added to event")
-		}
+	if err := evt.AddSegment(segmentIDInt); err != nil {
+		return err
 	}
-
-	evt.SegmentIDs = append(evt.SegmentIDs, segmentIDInt)
 
 	if err := h.events.UpdateEvent(evt); err != nil {
 		return err
 	}
 	logs.Logger.Info().Msgf("added segment %s to event %+v", id, segmentIDInt)
 
+	return nil
+}
+
+// AddUserSegmentTimesToEvent takes all the segments added to an event and finds the users best time on those segments.
+// We can then use the segment times to work out who has been the fastest.
+// TODO: The segment time should be within a specific time period to ensure it happened during the event.
+func (h *Handlers) AddUserSegmentTimesToEvent(c echo.Context) error {
+	eventID := c.Param("event_id")
+	if eventID == "" {
+		return fmt.Errorf("event_id or user_id can't be empty")
+	}
+
+	evt, err := h.events.FetchEvent(eventID)
+	if err != nil {
+		return fmt.Errorf("unable to fetch event %s", eventID)
+	}
+
+	// TODO: Extract this out into a method, this piece of code is duplicated in lots of places
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	id := claims["sub"].(string)
+
+	logs.Logger.Info().Msgf("fetching segments for user %s", id)
+
+	u, err := h.user.FetchUser(id)
+	if err != nil {
+		return err
+	}
+
+	if u == nil {
+		return fmt.Errorf("nil user, unable to perform request to Strava")
+	}
+
+	segmentEfforts, err := h.strava.GetSegmentEfforts(u.AccessToken, evt.SegmentIDs, evt.StartDate, evt.FinishDate)
+	if err != nil {
+		return err
+	}
+
+	if err := evt.PopulateSegmentEfforts(segmentEfforts, u.ID); err != nil {
+		return fmt.Errorf("unable to populate segment efforts on event")
+	}
+
+	if err := h.events.UpdateEvent(evt); err != nil {
+		return err
+	}
+
+	logs.Logger.Debug().Msgf(
+		"successfully added %d segments to event %s for user %s", len(segmentEfforts), evt.ID, u.ID,
+	)
 	return nil
 }
 
@@ -120,13 +166,18 @@ func (h *Handlers) AddUserToEvent(c echo.Context) error {
 	}
 
 	for _, user := range evt.Users {
-		if userID == user {
+		if userID == user.ID {
 			logs.Logger.Info().Msgf("user %s already added to event", userID)
 			return echo.NewHTTPError(http.StatusConflict, "user already added to event")
 		}
 	}
 
-	evt.Users = append(evt.Users, userID)
+	user, err := h.user.FetchUser(userID)
+	if err != nil {
+		return err
+	}
+
+	evt.Users = append(evt.Users, *user)
 
 	if err := h.events.UpdateEvent(evt); err != nil {
 		return err

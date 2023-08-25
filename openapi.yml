@@ -87,7 +87,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/DetailedAthlete'
               example:
-                id: 1234567890987654400
+                id: 12343545645788
                 username: marianne_t
                 resource_state: 3
                 firstname: Marianne
@@ -2460,6 +2460,14 @@ components:
             type: string
             description: The time at which the athlete was last updated.
             format: date-time
+        example:
+          firstname: Nicolas
+          lastname: Pocock
+          city: London
+          state: London
+          country: United Kingdom
+          sex: M
+          summit: true
     MetaAthlete:
       type: object
       properties:

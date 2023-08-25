@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"yellow-jersey/internal/services"
+	"yellow-jersey/internal/strava"
 	"yellow-jersey/internal/user"
 	"yellow-jersey/mocks"
 
@@ -17,13 +18,17 @@ func TestUser_CreateUser(t *testing.T) {
 	defer ctrl.Finish()
 
 	userMock := mocks.NewMockRepository(ctrl)
-	userMock.EXPECT().CreateUser("accessToken", "refreshToken", "stravaID").
+	userMock.EXPECT().CreateUser(
+		"accessToken", "refreshToken", "stravaID", strava.AthleteDetailed{FTP: 100},
+	).
 		Return(&user.User{ID: "id"}, nil).Times(1)
 
 	srv, err := services.NewUser(services.WithUserRepository(userMock))
 	require.NoError(t, err)
 
-	id, err := srv.CreateUser("accessToken", "refreshToken", "stravaID")
+	id, err := srv.CreateUser(
+		"accessToken", "refreshToken", "stravaID", strava.AthleteDetailed{FTP: 100},
+	)
 	assert.Equal(t, "id", id)
 	require.NoError(t, err)
 }

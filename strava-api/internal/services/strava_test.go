@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"testing"
+	"time"
 
 	"yellow-jersey/internal/services"
 	"yellow-jersey/internal/strava"
@@ -238,6 +239,96 @@ func TestStrava_GetDetailedSegments(t *testing.T) {
 		srv := services.NewWithStravaHTTPClient(httpClient)
 
 		_, err = srv.GetSegments("access", []int{1})
+		assert.Error(t, err)
+	})
+}
+
+func TestStrava_GetSegmentEffort(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	t.Run("Successful segment effort response", func(t *testing.T) {
+		segmentFile, err := os.ReadFile("testdata/segment_efforts.json")
+		assert.NoError(t, err)
+
+		httpClient := mocks.NewMockHTTPClient(ctrl)
+		httpClient.EXPECT().Do(gomock.Any()).Return(&http.Response{
+			StatusCode: http.StatusOK,
+			Body:       testutil.NoopCloser{Reader: bytes.NewBuffer(segmentFile)},
+		}, nil).Times(1)
+
+		srv := services.NewWithStravaHTTPClient(httpClient)
+
+		segments, err := srv.GetSegmentEfforts("access", []int{788127}, time.Now(), time.Now())
+		assert.Len(t, segments, 1)
+		require.NoError(t, err)
+	})
+
+	t.Run("Error from detailed segments", func(t *testing.T) {
+		stravaErr := strava.Error{
+			Message: "We can't authorise you, scum.",
+		}
+
+		b, err := json.Marshal(stravaErr)
+		require.NoError(t, err)
+		bytes.NewReader(b)
+
+		resp := &http.Response{
+			StatusCode: http.StatusForbidden,
+			Body:       testutil.NoopCloser{Reader: bytes.NewBuffer(b)},
+		}
+
+		httpClient := mocks.NewMockHTTPClient(ctrl)
+		httpClient.EXPECT().Do(gomock.Any()).Return(resp, nil).Times(1)
+
+		srv := services.NewWithStravaHTTPClient(httpClient)
+
+		_, err = srv.GetSegmentEfforts("access", []int{1}, time.Now(), time.Now())
+		assert.Error(t, err)
+	})
+}
+
+func TestStrava_GetAthleteDetailed(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	t.Run("Successful athlete detailed response", func(t *testing.T) {
+		segmentFile, err := os.ReadFile("testdata/athlete_detailed.json")
+		assert.NoError(t, err)
+
+		httpClient := mocks.NewMockHTTPClient(ctrl)
+		httpClient.EXPECT().Do(gomock.Any()).Return(&http.Response{
+			StatusCode: http.StatusOK,
+			Body:       testutil.NoopCloser{Reader: bytes.NewBuffer(segmentFile)},
+		}, nil).Times(1)
+
+		srv := services.NewWithStravaHTTPClient(httpClient)
+
+		athlete, err := srv.GetAthleteDetailed(12345, "1234")
+		assert.Equal(t, "Marianne", athlete.FirstName)
+		require.NoError(t, err)
+	})
+
+	t.Run("Error from detailed athlete", func(t *testing.T) {
+		stravaErr := strava.Error{
+			Message: "We can't authorise you, scum.",
+		}
+
+		b, err := json.Marshal(stravaErr)
+		require.NoError(t, err)
+		bytes.NewReader(b)
+
+		resp := &http.Response{
+			StatusCode: http.StatusForbidden,
+			Body:       testutil.NoopCloser{Reader: bytes.NewBuffer(b)},
+		}
+
+		httpClient := mocks.NewMockHTTPClient(ctrl)
+		httpClient.EXPECT().Do(gomock.Any()).Return(resp, nil).Times(1)
+
+		srv := services.NewWithStravaHTTPClient(httpClient)
+
+		_, err = srv.GetAthleteDetailed(1234, "234")
 		assert.Error(t, err)
 	})
 }

@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"gorm.io/gorm"
+
+	"yellow-jersey/internal/strava"
 )
 
 // Ensure MySQLRepository implements the Repository interface
@@ -21,8 +23,8 @@ func NewMySQLRepository(db *gorm.DB) *MySQLRepository {
 
 // CreateUser creates a new user within our database.This happens after a successful oauth2 authentication with
 // Strava.
-func (m *MySQLRepository) CreateUser(accessToken, refreshToken, stravaID string) (*User, error) {
-	user := NewUser(accessToken, refreshToken, stravaID)
+func (m *MySQLRepository) CreateUser(accessToken, refreshToken, stravaID string, ath strava.AthleteDetailed) (*User, error) {
+	user := NewUser(accessToken, refreshToken, stravaID, ath)
 	if err := m.db.Create(user).Error; err != nil {
 		return nil, fmt.Errorf("problem creating user with Strava ID %s within MySQL DB : %w", stravaID, err)
 	}

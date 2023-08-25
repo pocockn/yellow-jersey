@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 
+	"yellow-jersey/internal/strava"
 	"yellow-jersey/internal/user"
 	"yellow-jersey/pkg/logs"
 )
@@ -41,8 +42,8 @@ func WithUserRepository(ur user.Repository) UserConfig {
 }
 
 // CreateUser creates a user within our database after a successful oauth2 authentication with Strava.
-func (u *User) CreateUser(accessToken, refreshToken, stravaID string) (string, error) {
-	newUser, err := u.repo.CreateUser(accessToken, refreshToken, stravaID)
+func (u *User) CreateUser(accessToken, refreshToken, stravaID string, ath strava.AthleteDetailed) (string, error) {
+	newUser, err := u.repo.CreateUser(accessToken, refreshToken, stravaID, ath)
 	if err != nil {
 		return "", err
 	}

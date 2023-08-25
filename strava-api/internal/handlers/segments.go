@@ -85,7 +85,7 @@ func (h *Handlers) DetailedSegments(c echo.Context) error {
 	claims := user.Claims.(jwt.MapClaims)
 	id := claims["sub"].(string)
 
-	logs.Logger.Info().Msgf("fetching segments for user %s", id)
+	logs.Logger.Info().Msgf("fetching user %s", id)
 	u, err := h.user.FetchUser(id)
 	if err != nil {
 		return err

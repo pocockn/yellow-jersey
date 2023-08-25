@@ -28,7 +28,6 @@ services:
       ME_CONFIG_MONGODB_URL: mongodb://root:rootpassword@mongodb:27017/
 
   mock-strava-api:
-    platform: linux/amd64
     image: stoplight/prism:4
     command: 'mock -h 0.0.0.0 /tmp/api.oas3.yml'
     volumes:

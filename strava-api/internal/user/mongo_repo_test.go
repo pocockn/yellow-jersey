@@ -13,6 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
+	"yellow-jersey/internal/strava"
 	"yellow-jersey/internal/user"
 )
 
@@ -94,10 +95,14 @@ func TestMongoRepository_FetchAll(t *testing.T) {
 	mongo, err := user.NewMongoRepoWithDB(db)
 	assert.NoError(t, err)
 
-	_, err = mongo.CreateUser("token", "refresh_token", "strava_id")
+	_, err = mongo.CreateUser(
+		"token", "refresh_token", "strava_id", strava.AthleteDetailed{FTP: 250},
+	)
 	assert.NoError(t, err)
 
-	_, err = mongo.CreateUser("token", "refresh_token", "strava_id_2")
+	_, err = mongo.CreateUser(
+		"token", "refresh_token", "strava_id_2", strava.AthleteDetailed{FTP: 250},
+	)
 	assert.NoError(t, err)
 
 	usrs, err := mongo.FetchAll()
@@ -109,7 +114,9 @@ func TestMongoRepository_Create(t *testing.T) {
 	mongo, err := user.NewMongoRepoWithDB(db)
 	assert.NoError(t, err)
 
-	usr, err := mongo.CreateUser("token", "refresh_token", "strava_id")
+	usr, err := mongo.CreateUser(
+		"token", "refresh_token", "strava_id", strava.AthleteDetailed{FTP: 250},
+	)
 	assert.NoError(t, err)
 	assert.Equal(t, "strava_id", usr.StravaID)
 	assert.Equal(t, "token", usr.AccessToken)
@@ -120,7 +127,9 @@ func TestMongoRepository_Fetch(t *testing.T) {
 	mongo, err := user.NewMongoRepoWithDB(db)
 	assert.NoError(t, err)
 
-	usr, err := mongo.CreateUser("token", "refresh_token", "strava_id")
+	usr, err := mongo.CreateUser(
+		"token", "refresh_token", "strava_id", strava.AthleteDetailed{FTP: 250},
+	)
 	assert.NoError(t, err)
 
 	_, err = mongo.FetchUser(usr.ID)
@@ -131,7 +140,9 @@ func TestMongoRepository_Fetch_ByStravaID(t *testing.T) {
 	mongo, err := user.NewMongoRepoWithDB(db)
 	assert.NoError(t, err)
 
-	usr, err := mongo.CreateUser("token", "refresh_token", "strava_id")
+	usr, err := mongo.CreateUser(
+		"token", "refresh_token", "strava_id", strava.AthleteDetailed{FTP: 250},
+	)
 	assert.NoError(t, err)
 
 	usr, err = mongo.FetchUserByStravaID(usr.StravaID)
@@ -143,7 +154,9 @@ func TestMongoRepository_Update(t *testing.T) {
 	mongo, err := user.NewMongoRepoWithDB(db)
 	assert.NoError(t, err)
 
-	usr, err := mongo.CreateUser("token", "refresh_token", "strava_id")
+	usr, err := mongo.CreateUser(
+		"token", "refresh_token", "strava_id", strava.AthleteDetailed{FTP: 250},
+	)
 	assert.NoError(t, err)
 
 	usr.AccessToken = "new"
